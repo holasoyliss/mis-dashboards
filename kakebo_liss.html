@@ -474,9 +474,16 @@ function showTab(id) {
   const ts = document.getElementById('topbarSub');   if (ts) ts.textContent = subs[id]||'';
 }
 
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwZ_lMDlslIntt6hmWVuY4ECVRkS9m2OhjU_5mSKC0o9kdH_rfpl3ap6UNObqrVLRCsKA/exec';
+
+function apiFetch(params) {
+  const url = WEBAPP_URL + '?' + new URLSearchParams(params).toString();
+  return fetch(url).then(r => r.json());
+}
+
 function cargarTodo() {
-  google.script.run
-    .withSuccessHandler(res => {
+  apiFetch({ action: 'getGastos' })
+    .then(res => {
       if (!res.ok) { showToast('Error cargando datos','err'); return; }
       const todos = res.gastos || [];
       gastos  = todos.filter(g => g.cat !== '__CIERRE__');
@@ -484,8 +491,7 @@ function cargarTodo() {
       poblarMeses();
       renderDash();
     })
-    .withFailureHandler(e => showToast('Error: '+(e.message||e),'err'))
-    .getGastos();
+    .catch(e => showToast('Error: '+(e.message||e),'err'));
 }
 
 function poblarMeses() {
@@ -732,8 +738,9 @@ function guardarGasto() {
 
   const btn = document.getElementById('btnGuardar');
   btn.disabled=true; btn.textContent='Guardando...';
-  google.script.run
-    .withSuccessHandler(res => {
+  const id = Date.now();
+  apiFetch({ action:'agregarGasto', id, mes: mesSel, fecha, desc, monto, cat: catSel, quien: quienSel, division: divisionSel })
+    .then(res => {
       btn.disabled=false; btn.textContent='Guardar gasto';
       if (!res.ok) { showToast('Error: '+(res.error||'desconocido'),'err'); return; }
       document.getElementById('fDesc').value='';
@@ -742,16 +749,14 @@ function guardarGasto() {
       showToast('Gasto guardado ✓','ok');
       cargarTodo();
     })
-    .withFailureHandler(e => { btn.disabled=false; btn.textContent='Guardar gasto'; showToast('Error: '+(e.message||e),'err'); })
-    .agregarGasto(desc, monto, quienSel, catSel, fecha, divisionSel);
+    .catch(e => { btn.disabled=false; btn.textContent='Guardar gasto'; showToast('Error: '+(e.message||e),'err'); });
 }
 
 function eliminar(id) {
   if (!confirm('¿Eliminar este gasto?')) return;
-  google.script.run
-    .withSuccessHandler(res => { if(!res.ok){showToast('No se pudo eliminar','err');return;} showToast('Eliminado','ok'); cargarTodo(); })
-    .withFailureHandler(()=>showToast('Error al eliminar','err'))
-    .eliminarGasto(id);
+  apiFetch({ action:'eliminarGasto', id })
+    .then(res => { if(!res.ok){showToast('No se pudo eliminar','err');return;} showToast('Eliminado','ok'); cargarTodo(); })
+    .catch(()=>showToast('Error al eliminar','err'));
 }
 
 function abrirModalMeta() {
@@ -850,14 +855,13 @@ function cerrarModal() { document.getElementById('modalOverlay').classList.remov
 function ejecutarCierre() {
   const btn = document.getElementById('modalBtnConfirm');
   btn.disabled=true; btn.textContent='Cerrando...';
-  google.script.run
-    .withSuccessHandler(res => {
+  apiFetch({ action:'cerrarMes', mes: mesSel })
+    .then(res => {
       btn.disabled=false; btn.textContent='Cerrar mes'; cerrarModal();
       if (!res.ok) { showToast('Error: '+(res.error||'desconocido'),'err'); return; }
       showToast(`${mesSel} cerrado ✓`,'ok'); cargarTodo();
     })
-    .withFailureHandler(e => { btn.disabled=false; btn.textContent='Cerrar mes'; cerrarModal(); showToast('Error: '+(e.message||e),'err'); })
-    .cerrarMes(mesSel);
+    .catch(e => { btn.disabled=false; btn.textContent='Cerrar mes'; cerrarModal(); showToast('Error: '+(e.message||e),'err'); });
 }
 
 function fmt(n) { return '$'+Math.round(n).toLocaleString('es-CL'); }
