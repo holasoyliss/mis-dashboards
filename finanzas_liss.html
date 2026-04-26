@@ -400,6 +400,10 @@ function addEgreso(){
 }
 
 function deleteRow(id){
+  const mov=movimientos.find(m=>m.id===id);
+  const desc=mov?mov.desc||mov.cat:'este movimiento';
+  const monto=mov?fmt(mov.monto):'';
+  if(!confirm('¿Eliminar '+desc+(monto?' ('+monto+')':'')+'?'))return;
   apiFetch({action:'deleteMov',id})
     .then(()=>{movimientos=movimientos.filter(m=>m.id!==id);updateAll();toast('Eliminado','ok');})
     .catch(e=>toast('Error: '+e.message,'err'));
@@ -407,7 +411,7 @@ function deleteRow(id){
 
 function clearMes(){
   const k=mesKey(mesActual);
-  if(!confirm('¿Eliminar todos los movimientos de este mes?'))return;
+  if(!confirm('¿Eliminar TODOS los movimientos de '+cap(mesLbl(mesActual))+'? Esta accion no se puede deshacer.'))return;
   apiFetch({action:'clearMesMov',mesKey:k})
     .then(()=>{movimientos=movimientos.filter(m=>fechaMesKey(m.fecha)!==k);updateAll();toast('Mes limpiado','ok');})
     .catch(e=>toast('Error: '+e.message,'err'));
@@ -531,8 +535,7 @@ function registrarAbono(id){
   const d=deudas.find(d=>d.id===id);if(!d)return;
   if(!d.abonos)d.abonos=[];
   const abonado=d.abonos.reduce((s,a)=>s+a.monto,0),pendiente=d.monto-abonado;
-  const montoStr=prompt('¿Cuánto te pagó '+d.nombre+' hoy?
-Pendiente: '+fmt(pendiente));
+  const montoStr=prompt('Cuanto te pago '+d.nombre+' hoy? Pendiente: '+fmt(pendiente));
   if(!montoStr)return;
   const monto=parseFloat(montoStr);if(!monto||monto<=0)return;
   if(monto>pendiente+0.01){alert('El pago no puede superar el pendiente ('+fmt(pendiente)+')');return;}
@@ -565,6 +568,10 @@ function togglePago(id){
 }
 
 function deleteDeuda(id){
+  const d=deudas.find(d=>d.id===id);
+  const desc=d?d.desc||d.nombre:'este prestamo';
+  const monto=d?fmt(d.monto):'';
+  if(!confirm('¿Eliminar prestamo: '+desc+(monto?' ('+monto+')':'')+'? Esta accion no se puede deshacer.'))return;
   apiFetch({action:'deleteDeudaRow',id})
     .then(()=>{deudas=deudas.filter(d=>d.id!==id);renderDeudas();updateConsolidado();toast('Eliminado','ok');})
     .catch(e=>toast('Error: '+e.message,'err'));
