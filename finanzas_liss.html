@@ -270,9 +270,9 @@ td.amt.pos { color:var(--green); } td.amt.neg { color:var(--red); }
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-// ══════════════════════════════════════════════════════
-//  CONFIGURACIÓN — pega aquí tu URL de Web App
-// ══════════════════════════════════════════════════════
+//                                                       
+//  CONFIGURACI N   pega aqu  tu URL de Web App
+//                                                       
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyoAD3JEeWvFmMKjLPloUEDGwwFKH8Q2AErQJHR2mIFh9eBeCUhxuwkZFlHlOetB41jpQ/exec';
 
 function apiFetch(params) {
@@ -403,7 +403,7 @@ function deleteRow(id){
   const mov=movimientos.find(m=>m.id===id);
   const desc=mov?mov.desc||mov.cat:'este movimiento';
   const monto=mov?fmt(mov.monto):'';
-  if(!confirm('¿Eliminar '+desc+(monto?' ('+monto+')':'')+'?'))return;
+  if(!confirm('Eliminar: '+desc+(monto?' ('+monto+')':'')+' - Confirmar?'))return;
   apiFetch({action:'deleteMov',id})
     .then(()=>{movimientos=movimientos.filter(m=>m.id!==id);updateAll();toast('Eliminado','ok');})
     .catch(e=>toast('Error: '+e.message,'err'));
@@ -411,7 +411,7 @@ function deleteRow(id){
 
 function clearMes(){
   const k=mesKey(mesActual);
-  if(!confirm('¿Eliminar TODOS los movimientos de '+cap(mesLbl(mesActual))+'? Esta accion no se puede deshacer.'))return;
+  if(!confirm('Eliminar TODOS los movimientos de '+cap(mesLbl(mesActual))+'? No se puede deshacer.'))return;
   apiFetch({action:'clearMesMov',mesKey:k})
     .then(()=>{movimientos=movimientos.filter(m=>fechaMesKey(m.fecha)!==k);updateAll();toast('Mes limpiado','ok');})
     .catch(e=>toast('Error: '+e.message,'err'));
@@ -571,14 +571,14 @@ function deleteDeuda(id){
   const d=deudas.find(d=>d.id===id);
   const desc=d?d.desc||d.nombre:'este prestamo';
   const monto=d?fmt(d.monto):'';
-  if(!confirm('¿Eliminar prestamo: '+desc+(monto?' ('+monto+')':'')+'? Esta accion no se puede deshacer.'))return;
+  if(!confirm('Eliminar prestamo: '+desc+(monto?' ('+monto+')':'')+' - No se puede deshacer.'))return;
   apiFetch({action:'deleteDeudaRow',id})
     .then(()=>{deudas=deudas.filter(d=>d.id!==id);renderDeudas();updateConsolidado();toast('Eliminado','ok');})
     .catch(e=>toast('Error: '+e.message,'err'));
 }
 
 function deletePersona(nombre){
-  if(!confirm('¿Eliminar todos los registros de '+nombre+'?'))return;
+  if(!confirm('Eliminar todos los registros de '+nombre+'?'))return;
   apiFetch({action:'deletePersonaDeudas',nombre})
     .then(()=>{deudas=deudas.filter(d=>d.nombre!==nombre);renderDeudas();updateConsolidado();toast('Persona eliminada','ok');})
     .catch(e=>toast('Error: '+e.message,'err'));
