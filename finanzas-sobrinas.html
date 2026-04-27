@@ -1,0 +1,1936 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>finanzas-sobrinas · Academia Tía Liss</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --morado: #6d28d9;
+    --morado-claro: #8b5cf6;
+    --morado-muy-claro: #ede9fe;
+    --amarillo: #f59e0b;
+    --amarillo-claro: #fef9c3;
+    --amarillo-oscuro: #92400e;
+    --blanco: #ffffff;
+    --gris-claro: #f8f7ff;
+    --gris-borde: #e5e0f8;
+    --texto: #1a1040;
+    --texto-suave: #6b5b9e;
+    --verde: #059669;
+    --rojo: #dc2626;
+    --font-titulo: 'Syne', sans-serif;
+    --font-cuerpo: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-cuerpo); background: var(--gris-claro); color: var(--texto); min-height: 100vh; }
+
+  /* ---- PANTALLA INICIAL ---- */
+  .pantalla { display: none; }
+  .pantalla.activa { display: block; }
+
+  /* LOGIN */
+  #login { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; background: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #6d28d9 100%); display:none; }
+  .login-logo { font-family: var(--font-titulo); font-size: 2.2rem; font-weight: 800; color: var(--amarillo); letter-spacing: -1px; margin-bottom: 0.25rem; }
+  .login-sub { color: #c4b5fd; font-size: 0.9rem; margin-bottom: 2.5rem; text-align: center; }
+  .perfil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-width: 380px; margin-bottom: 1.5rem; }
+  .perfil-btn { background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.2s; color: white; }
+  .perfil-btn:hover { background: rgba(245,158,11,0.2); border-color: var(--amarillo); transform: translateY(-2px); }
+  .perfil-avatar { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 800; font-family: var(--font-titulo); }
+  .perfil-nombre { font-family: var(--font-titulo); font-weight: 600; font-size: 1rem; }
+  .perfil-nivel { font-size: 0.75rem; color: #c4b5fd; margin-top: 0.25rem; }
+  .tia-btn { width: 100%; max-width: 380px; background: var(--amarillo); border: none; border-radius: 12px; padding: 1rem; font-family: var(--font-titulo); font-weight: 700; font-size: 1rem; color: var(--amarillo-oscuro); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .tia-btn:hover { background: #d97706; transform: translateY(-1px); }
+
+  /* HEADER */
+  .header { background: white; border-bottom: 2px solid var(--gris-borde); padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .header-logo { font-family: var(--font-titulo); font-weight: 800; font-size: 1.1rem; color: var(--morado); }
+  .header-user { display: flex; align-items: center; gap: 8px; }
+  .header-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; font-family: var(--font-titulo); }
+  .header-nombre { font-size: 0.85rem; font-weight: 500; }
+  .header-salir { background: none; border: 1px solid var(--gris-borde); border-radius: 8px; padding: 4px 10px; font-size: 0.75rem; cursor: pointer; color: var(--texto-suave); }
+
+  /* NAV BOTTOM */
+  .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--gris-borde); display: flex; z-index: 100; }
+  .nav-btn { flex: 1; padding: 0.75rem 0.5rem 0.6rem; text-align: center; cursor: pointer; border: none; background: none; color: var(--texto-suave); transition: color 0.15s; }
+  .nav-btn.activo { color: var(--morado); }
+  .nav-btn svg { display: block; margin: 0 auto 2px; }
+  .nav-btn span { font-size: 0.65rem; display: block; }
+
+  /* CONTENIDO */
+  .contenido { padding: 1rem 1rem 5rem; max-width: 680px; margin: 0 auto; }
+
+  /* DASHBOARD */
+  .bienvenida { background: linear-gradient(135deg, var(--morado) 0%, #7c3aed 100%); border-radius: 16px; padding: 1.25rem; color: white; margin-bottom: 1rem; position: relative; overflow: hidden; }
+  .bienvenida::before { content: '★'; position: absolute; right: -10px; top: -10px; font-size: 6rem; opacity: 0.08; }
+  .bienvenida h2 { font-family: var(--font-titulo); font-size: 1.2rem; font-weight: 700; }
+  .bienvenida p { font-size: 0.8rem; color: #c4b5fd; margin-top: 4px; }
+  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 1rem; }
+  .stat-card { background: white; border: 1px solid var(--gris-borde); border-radius: 12px; padding: 0.85rem 0.75rem; text-align: center; }
+  .stat-label { font-size: 0.65rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-valor { font-family: var(--font-titulo); font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
+  .stat-valor.morado { color: var(--morado); }
+  .stat-valor.amarillo { color: var(--amarillo); }
+  .stat-valor.rojo { color: var(--rojo); }
+  .stat-valor.verde { color: var(--verde); }
+
+  /* SEMANAS */
+  .semana-card { background: white; border: 1px solid var(--gris-borde); border-radius: 14px; margin-bottom: 0.75rem; overflow: hidden; cursor: pointer; transition: all 0.2s; }
+  .semana-card:hover { border-color: var(--morado-claro); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(109,40,217,0.1); }
+  .semana-card.bloqueada { opacity: 0.5; cursor: not-allowed; }
+  .semana-card.bloqueada:hover { transform: none; box-shadow: none; }
+  .semana-header { display: flex; align-items: center; gap: 12px; padding: 1rem; }
+  .semana-icono { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .semana-info { flex: 1; }
+  .semana-num { font-size: 0.7rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.05em; }
+  .semana-titulo { font-family: var(--font-titulo); font-weight: 600; font-size: 0.95rem; }
+  .semana-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 999px; font-weight: 500; }
+  .badge-completada { background: #d1fae5; color: #065f46; }
+  .badge-activa { background: var(--morado-muy-claro); color: var(--morado); }
+  .badge-bloqueada { background: #f3f4f6; color: #9ca3af; }
+  .progress-bar { height: 4px; background: var(--gris-borde); }
+  .progress-fill { height: 4px; background: linear-gradient(90deg, var(--morado), var(--morado-claro)); transition: width 0.5s; }
+
+  /* PANEL LECCION */
+  #leccion { display: none; position: fixed; inset: 0; background: white; z-index: 200; overflow-y: auto; }
+  .leccion-header { background: var(--morado); color: white; padding: 1rem; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; }
+  .leccion-back { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; padding: 4px; }
+  .leccion-titulo { font-family: var(--font-titulo); font-weight: 700; font-size: 1rem; flex: 1; }
+  .leccion-body { padding: 1.25rem; max-width: 680px; margin: 0 auto; }
+  .leccion-seccion { margin-bottom: 1.5rem; }
+  .leccion-seccion h3 { font-family: var(--font-titulo); font-size: 1rem; color: var(--morado); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .leccion-texto { font-size: 0.9rem; line-height: 1.7; color: var(--texto); }
+  .info-box { background: var(--morado-muy-claro); border-left: 4px solid var(--morado); border-radius: 0 12px 12px 0; padding: 0.85rem 1rem; margin: 0.75rem 0; font-size: 0.85rem; }
+  .alerta-box { background: #fef9c3; border-left: 4px solid var(--amarillo); border-radius: 0 12px 12px 0; padding: 0.85rem 1rem; margin: 0.75rem 0; font-size: 0.85rem; }
+  .ejemplo-box { background: #f0fdf4; border-left: 4px solid var(--verde); border-radius: 0 12px 12px 0; padding: 0.85rem 1rem; margin: 0.75rem 0; font-size: 0.85rem; }
+  .concepto-grid { display: grid; gap: 8px; margin: 0.75rem 0; }
+  .concepto-item { background: var(--gris-claro); border: 1px solid var(--gris-borde); border-radius: 10px; padding: 0.75rem; }
+  .concepto-titulo { font-family: var(--font-titulo); font-size: 0.85rem; font-weight: 600; color: var(--morado); }
+  .concepto-desc { font-size: 0.8rem; color: var(--texto-suave); margin-top: 2px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 1rem; background: var(--gris-claro); border-radius: 10px; padding: 4px; }
+  .tab-btn { flex: 1; padding: 0.5rem; border: none; background: none; border-radius: 8px; font-size: 0.8rem; cursor: pointer; color: var(--texto-suave); font-family: var(--font-cuerpo); transition: all 0.15s; }
+  .tab-btn.activo { background: white; color: var(--morado); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .tab-content { display: none; }
+  .tab-content.activo { display: block; }
+
+  /* QUIZ */
+  .quiz-pregunta { background: white; border: 2px solid var(--gris-borde); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
+  .quiz-num { font-size: 0.7rem; color: var(--texto-suave); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .quiz-texto { font-family: var(--font-titulo); font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; }
+  .quiz-opciones { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opcion { padding: 0.75rem 1rem; border: 1.5px solid var(--gris-borde); border-radius: 10px; cursor: pointer; font-size: 0.85rem; transition: all 0.15s; background: white; text-align: left; }
+  .quiz-opcion:hover:not(.respondida) { border-color: var(--morado-claro); background: var(--morado-muy-claro); }
+  .quiz-opcion.correcta { border-color: var(--verde); background: #d1fae5; color: #065f46; }
+  .quiz-opcion.incorrecta { border-color: var(--rojo); background: #fee2e2; color: #991b1b; }
+  .quiz-resultado { text-align: center; padding: 1.5rem; background: white; border-radius: 14px; border: 2px solid var(--gris-borde); }
+  .quiz-score { font-family: var(--font-titulo); font-size: 3rem; font-weight: 800; }
+  .quiz-score.aprobado { color: var(--verde); }
+  .quiz-score.reprobado { color: var(--rojo); }
+
+  /* DESAFIO */
+  .desafio-card { background: linear-gradient(135deg, #fef9c3, #fde68a); border: 2px solid var(--amarillo); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
+  .desafio-titulo { font-family: var(--font-titulo); font-size: 1rem; font-weight: 700; color: var(--amarillo-oscuro); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+  .desafio-desc { font-size: 0.85rem; color: #78350f; line-height: 1.6; }
+  .desafio-input-area { margin-top: 0.85rem; }
+  .desafio-input-area label { font-size: 0.8rem; color: #78350f; font-weight: 500; display: block; margin-bottom: 4px; }
+  .desafio-input-area textarea { width: 100%; border: 1.5px solid #d97706; border-radius: 10px; padding: 0.75rem; font-size: 0.85rem; font-family: var(--font-cuerpo); resize: vertical; min-height: 80px; background: white; }
+  .desafio-input-area textarea:focus { outline: none; border-color: var(--morado); }
+
+  /* BANCO TIA */
+  .banco-hero { background: linear-gradient(135deg, #92400e, #b45309); border-radius: 16px; padding: 1.25rem; color: white; margin-bottom: 1rem; }
+  .banco-hero h2 { font-family: var(--font-titulo); font-size: 1.2rem; font-weight: 800; color: var(--amarillo); }
+  .banco-hero p { font-size: 0.8rem; color: #fde68a; margin-top: 4px; }
+  .prestamo-form { background: white; border: 1px solid var(--gris-borde); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
+  .prestamo-form h3 { font-family: var(--font-titulo); font-weight: 700; font-size: 0.95rem; margin-bottom: 1rem; color: var(--texto); }
+  .form-group { margin-bottom: 0.85rem; }
+  .form-label { font-size: 0.8rem; font-weight: 500; color: var(--texto-suave); display: block; margin-bottom: 4px; }
+  .form-input { width: 100%; border: 1.5px solid var(--gris-borde); border-radius: 10px; padding: 0.65rem 0.85rem; font-size: 0.9rem; font-family: var(--font-cuerpo); transition: border-color 0.15s; }
+  .form-input:focus { outline: none; border-color: var(--morado); }
+  .form-select { width: 100%; border: 1.5px solid var(--gris-borde); border-radius: 10px; padding: 0.65rem 0.85rem; font-size: 0.9rem; font-family: var(--font-cuerpo); background: white; }
+  .btn-primary { width: 100%; background: var(--morado); color: white; border: none; border-radius: 12px; padding: 0.9rem; font-family: var(--font-titulo); font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .btn-primary:hover { background: #5b21b6; transform: translateY(-1px); }
+  .btn-success { background: var(--verde); }
+  .btn-success:hover { background: #047857; }
+  .btn-amarillo { background: var(--amarillo); color: var(--amarillo-oscuro); }
+  .btn-amarillo:hover { background: #d97706; }
+  .prestamo-item { background: white; border: 1px solid var(--gris-borde); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; }
+  .prestamo-row { display: flex; justify-content: space-between; align-items: center; }
+  .prestamo-persona { font-family: var(--font-titulo); font-weight: 600; font-size: 0.9rem; }
+  .prestamo-monto { font-family: var(--font-titulo); font-weight: 700; font-size: 1rem; color: var(--morado); }
+  .prestamo-detalle { font-size: 0.75rem; color: var(--texto-suave); margin-top: 4px; }
+  .prestamo-estado { font-size: 0.7rem; padding: 3px 8px; border-radius: 999px; font-weight: 600; }
+  .estado-pendiente { background: #fef9c3; color: #92400e; }
+  .estado-vencido { background: #fee2e2; color: #991b1b; }
+  .estado-pagado { background: #d1fae5; color: #065f46; }
+  .btn-pagar { background: var(--verde); color: white; border: none; border-radius: 8px; padding: 5px 12px; font-size: 0.75rem; font-family: var(--font-cuerpo); font-weight: 500; cursor: pointer; margin-top: 8px; }
+  .interes-warning { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 10px; padding: 0.75rem; margin-top: 8px; font-size: 0.8rem; color: #991b1b; }
+
+  /* LOGROS */
+  .logro-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .logro-item { background: white; border: 1px solid var(--gris-borde); border-radius: 12px; padding: 0.75rem; text-align: center; }
+  .logro-icon { font-size: 1.5rem; margin-bottom: 4px; }
+  .logro-nombre { font-size: 0.7rem; font-weight: 500; color: var(--texto); }
+  .logro-item.ganado { background: var(--morado-muy-claro); border-color: var(--morado-claro); }
+  .logro-item.ganado .logro-nombre { color: var(--morado); }
+
+  /* TOASTS */
+  .toast { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); background: var(--morado); color: white; padding: 0.75rem 1.25rem; border-radius: 12px; font-size: 0.85rem; font-weight: 500; z-index: 999; display: none; box-shadow: 0 4px 20px rgba(109,40,217,0.3); }
+
+  /* SIMULADOR */
+  .simulador-card { background: white; border: 1px solid var(--gris-borde); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
+  .sim-resultado { background: var(--morado-muy-claro); border-radius: 10px; padding: 1rem; margin-top: 1rem; }
+  .sim-fila { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 0.85rem; }
+  .sim-fila .label { color: var(--texto-suave); }
+  .sim-fila .valor { font-weight: 600; color: var(--texto); }
+  .sim-total { border-top: 1px solid var(--gris-borde); margin-top: 8px; padding-top: 8px; font-family: var(--font-titulo); font-size: 1rem; }
+  .sim-total .valor { color: var(--morado); font-size: 1.1rem; }
+
+  /* MODALS */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-box { background: white; border-radius: 16px; padding: 1.5rem; width: 100%; max-width: 420px; }
+  .modal-titulo { font-family: var(--font-titulo); font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+  .modal-btns { display: flex; gap: 8px; margin-top: 1rem; }
+  .modal-btns button { flex: 1; padding: 0.75rem; border: none; border-radius: 10px; font-family: var(--font-titulo); font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+  .btn-cancelar { background: var(--gris-claro); color: var(--texto-suave); }
+
+  /* DEBATE BOX */
+  .debate-box { background: linear-gradient(135deg, #2e1065 0%, #4c1d95 100%); border-radius: 14px; padding: 1.1rem 1.2rem; margin: 0.75rem 0; }
+  .debate-titulo { font-family: var(--font-titulo); font-size: 0.78rem; font-weight: 700; color: var(--amarillo); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; margin-top: 10px; }
+  .debate-titulo:first-child { margin-top: 0; }
+  .debate-box p { color: #e8e0ff; }
+
+  /* REWARD BADGE */
+  .reward-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #3c2c00; font-family: var(--font-titulo); font-size: 0.75rem; font-weight: 700; padding: 5px 12px; border-radius: 999px; margin-bottom: 1rem; }
+
+  /* CERTIFICADO */
+  .cert-container { background: linear-gradient(135deg, #1e0a3c, #4c1d95); border-radius: 20px; padding: 2rem; text-align: center; border: 3px solid var(--amarillo); }
+  .cert-logo { font-family: var(--font-titulo); font-size: 2rem; font-weight: 800; color: var(--amarillo); }
+  .cert-nombre { font-family: var(--font-titulo); font-size: 1.4rem; font-weight: 800; color: white; margin: 0.5rem 0; }
+  .cert-texto { color: #c4b5fd; font-size: 0.85rem; line-height: 1.6; }
+  .cert-premio { font-family: var(--font-titulo); font-size: 2.5rem; font-weight: 800; color: var(--amarillo); margin: 1rem 0 0.25rem; }
+
+  @media (min-width: 480px) {
+    .contenido { padding: 1.25rem 1.5rem 5.5rem; }
+    .logro-grid { grid-template-columns: repeat(4,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== PANTALLA BIENVENIDA ===== -->
+<div id="bienvenida-splash" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; background:linear-gradient(160deg, #1e0a3c 0%, #3b0764 40%, #6d28d9 80%, #f59e0b 130%); position:relative; overflow:hidden;">
+  <!-- Decorative stars -->
+  <div style="position:absolute;top:10%;left:8%;font-size:1.2rem;opacity:0.3;animation:float1 4s ease-in-out infinite;">★</div>
+  <div style="position:absolute;top:20%;right:10%;font-size:0.8rem;opacity:0.4;animation:float2 5s ease-in-out infinite;">★</div>
+  <div style="position:absolute;top:60%;left:5%;font-size:0.6rem;opacity:0.3;animation:float1 6s ease-in-out infinite;">★</div>
+  <div style="position:absolute;bottom:20%;right:8%;font-size:1rem;opacity:0.3;animation:float2 4.5s ease-in-out infinite;">★</div>
+  <style>
+    @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .splash-el { animation: fadeUp 0.7s ease both; }
+    .splash-el:nth-child(2){animation-delay:0.1s}
+    .splash-el:nth-child(3){animation-delay:0.25s}
+    .splash-el:nth-child(4){animation-delay:0.4s}
+    .splash-el:nth-child(5){animation-delay:0.55s}
+    .splash-el:nth-child(6){animation-delay:0.7s}
+    .splash-el:nth-child(7){animation-delay:0.85s}
+  </style>
+
+  <!-- Logo -->
+  <div class="splash-el" style="font-family:'Syne',sans-serif; font-size:2.4rem; font-weight:800; color:#f59e0b; letter-spacing:-1px; margin-bottom:0.1rem;">★ FinanzasPro</div>
+  <div class="splash-el" style="font-size:0.85rem; color:#c4b5fd; margin-bottom:2rem; letter-spacing:0.08em; text-transform:uppercase;">Academia Financiera · Chile 🇨🇱</div>
+
+  <!-- Carta de la tía -->
+  <div class="splash-el" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:20px; padding:1.75rem 1.5rem; max-width:420px; width:100%; margin-bottom:1.75rem; backdrop-filter:blur(4px);">
+    
+    <!-- Avatar tía -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.25rem;">
+      <div style="width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#f59e0b,#d97706); display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; color:#3c2c00; flex-shrink:0;">TL</div>
+      <div>
+        <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; color:#fde68a;">La Tía Liss</div>
+        <div style="font-size:0.75rem; color:#a78bfa;">tiene un regalo para ti 💜</div>
+      </div>
+    </div>
+
+    <!-- Carta -->
+    <div style="font-size:0.88rem; line-height:1.75; color:#e8e0ff;">
+      <p style="margin-bottom:0.85rem;">Querida <strong style="color:#fde68a;">Giovanna Sinaí</strong> y <strong style="color:#fde68a;">Fabiana Paola</strong>,</p>
+      
+      <p style="margin-bottom:0.85rem;">Saber manejar el dinero ha sido uno de los mayores <strong style="color:#fbbf24;">superpoderes</strong> de mi vida. No lo aprendí en el colegio — lo aprendí a los golpes, cometiendo errores que me costaron tiempo, estrés y dinero.</p>
+
+      <p style="margin-bottom:0.85rem;">Hubo momentos en que no entendía por qué me faltaba dinero antes de fin de mes. O por qué una compra en cuotas terminaba costando el doble. O por qué ahorrar un poco cada semana puede cambiar completamente tu futuro.</p>
+
+      <p style="margin-bottom:0.85rem;">Hoy sé que el dinero no es magia — es una <strong style="color:#fbbf24;">habilidad que se aprende</strong>. Y quiero que ustedes la aprendan desde jóvenes, cuando todavía tienen el activo más valioso del mundo: el tiempo.</p>
+
+      <p style="margin-bottom:0;">Esto es mi regalo para ustedes. Cada semana aprenderán algo nuevo y lo pondrán en práctica. Yo estaré aquí, como su "banco", para que también practiquen con dinero real.</p>
+    </div>
+
+    <!-- Firma -->
+    <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-family:'Syne',sans-serif; font-weight:700; color:#fde68a; font-size:0.9rem;">Con todo mi amor,</div>
+        <div style="font-size:0.8rem; color:#a78bfa; margin-top:2px;">La Tía Liss ✨</div>
+      </div>
+      <div style="font-size:2rem;">💜</div>
+    </div>
+  </div>
+
+  <!-- Botón entrar -->
+  <button class="splash-el" onclick="irALogin()" style="background:linear-gradient(135deg,#f59e0b,#d97706); border:none; border-radius:14px; padding:1rem 2.5rem; font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem; color:#3c2c00; cursor:pointer; display:flex; align-items:center; gap:10px; transition:all 0.2s; box-shadow:0 4px 20px rgba(245,158,11,0.35);">
+    ¡Empezar mi aventura financiera! →
+  </button>
+  <div class="splash-el" style="font-size:0.72rem; color:#7c5cba; margin-top:1rem; text-align:center;">10 semanas · Desafíos reales · Pesos chilenos</div>
+</div>
+
+<!-- ===== PANTALLA LOGIN ===== -->
+<div id="login" style="display:none;">
+  <div class="login-logo">★ FinanzasPro</div>
+  <div class="login-sub">Academia Financiera · Chile 🇨🇱</div>
+  <div class="perfil-grid">
+    <div class="perfil-btn" onclick="entrar(0)">
+      <div class="perfil-avatar" style="background:#8b5cf6; color:white;">GS</div>
+      <div class="perfil-nombre" id="nombre-s0">Giovanna Sinaí</div>
+      <div class="perfil-nivel" id="nivel-s0">Semana 1 · ⭐ 0 pts</div>
+    </div>
+    <div class="perfil-btn" onclick="entrar(1)">
+      <div class="perfil-avatar" style="background:#f59e0b; color:#78350f;">FP</div>
+      <div class="perfil-nombre" id="nombre-s1">Fabiana Paola</div>
+      <div class="perfil-nivel" id="nivel-s1">Semana 1 · ⭐ 0 pts</div>
+    </div>
+  </div>
+  <button class="tia-btn" onclick="entrarTia()">🏦 Soy la Tía Liss — Entrar</button>
+  <button class="tia-btn" style="background:rgba(255,255,255,0.15);color:#e0d7ff;border:1.5px solid rgba(255,255,255,0.25);margin-top:0.5rem;" onclick="entrarGretty()">👩‍👧 Soy Gretty — Ver progreso de mis hijas</button>
+  <p style="color:#a78bfa; font-size:0.75rem; margin-top:1rem; text-align:center;">Toca tu perfil para ingresar</p>
+</div>
+
+<!-- ===== APP PRINCIPAL ===== -->
+<div id="app" style="display:none;">
+  <div class="header">
+    <div class="header-logo">★ FinanzasPro</div>
+    <div class="header-user">
+      <div class="header-avatar" id="app-avatar" style="background:#8b5cf6;color:white;">GS</div>
+      <span class="header-nombre" id="app-nombre">Giovanna Sinaí</span>
+      <button class="header-salir" onclick="salir()">Salir</button>
+    </div>
+  </div>
+
+  <!-- Sección INICIO -->
+  <div id="sec-inicio" class="contenido">
+    <div class="bienvenida">
+      <h2 id="bienvenida-nombre">¡Hola, Giovanna Sinaí! 👋</h2>
+      <p>Continúa aprendiendo finanzas · Semana <span id="bienvenida-semana">1</span> de 10</p>
+    </div>
+    <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
+      <div class="stat-card">
+        <div class="stat-label">Puntos</div>
+        <div class="stat-valor morado" id="stat-puntos">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Semana</div>
+        <div class="stat-valor amarillo" id="stat-semana">1/10</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">💰 Ganado</div>
+        <div class="stat-valor verde" id="stat-dinero">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Deuda TIA</div>
+        <div class="stat-valor rojo" id="stat-deuda">$0</div>
+      </div>
+    </div>
+    <div id="lista-semanas"></div>
+  </div>
+
+  <!-- Sección BANCO / PRÉSTAMOS (vista sobrina) -->
+  <div id="sec-banco" class="contenido" style="display:none;">
+    <h2 style="font-family:var(--font-titulo); margin-bottom:1rem; font-size:1.1rem;">🏦 Mis Préstamos</h2>
+    <div id="mis-prestamos-lista"></div>
+    <div class="simulador-card">
+      <h3 style="font-family:var(--font-titulo); font-size:0.95rem; margin-bottom:1rem;">🧮 Simulador TDC / Crédito</h3>
+      <div class="form-group">
+        <label class="form-label">Monto a comprar ($)</label>
+        <input class="form-input" type="number" id="sim-monto" placeholder="ej: 50000" oninput="simular()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">N° de cuotas</label>
+        <select class="form-select" id="sim-cuotas" onchange="simular()">
+          <option value="1">1 cuota</option>
+          <option value="3">3 cuotas</option>
+          <option value="6" selected>6 cuotas</option>
+          <option value="12">12 cuotas</option>
+          <option value="24">24 cuotas</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tasa de interés mensual (%)</label>
+        <input class="form-input" type="number" id="sim-tasa" value="3.5" step="0.1" oninput="simular()">
+      </div>
+      <div class="sim-resultado" id="sim-resultado" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Sección LOGROS -->
+  <div id="sec-logros" class="contenido" style="display:none;">
+    <h2 style="font-family:var(--font-titulo); margin-bottom:1rem; font-size:1.1rem;">🏆 Mis Logros</h2>
+    <div class="logro-grid" id="logros-grid"></div>
+    <div style="margin-top:1.5rem; background:white; border-radius:14px; border:1px solid var(--gris-borde); padding:1.25rem;">
+      <h3 style="font-family:var(--font-titulo); font-size:0.95rem; margin-bottom:1rem;">📊 Mi Progreso</h3>
+      <div id="progreso-detalle"></div>
+    </div>
+    <div style="margin-top:1rem; background:white; border-radius:14px; border:1px solid var(--gris-borde); padding:1.25rem;">
+      <h3 style="font-family:var(--font-titulo); font-size:0.95rem; margin-bottom:1rem;">📖 Glosario Financiero</h3>
+      <div id="glosario-contenido"></div>
+    </div>
+  </div>
+
+  <!-- NAV BOTTOM -->
+  <div class="nav-bottom">
+    <button class="nav-btn activo" id="nav-inicio" onclick="mostrarSeccion('inicio')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Inicio</span>
+    </button>
+    <button class="nav-btn" id="nav-banco" onclick="mostrarSeccion('banco')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      <span>Banco</span>
+    </button>
+    <button class="nav-btn" id="nav-logros" onclick="mostrarSeccion('logros')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      <span>Logros</span>
+    </button>
+  </div>
+</div>
+
+<!-- ===== PANEL TIA ===== -->
+<div id="panel-tia" style="display:none;">
+  <div class="header">
+    <div class="header-logo">🏦 Banco de la Tía Liss</div>
+    <button class="header-salir" onclick="salir()">Salir</button>
+  </div>
+  <div class="contenido" style="padding-bottom:2rem;">
+    <div class="banco-hero">
+      <h2>Panel de Préstamos</h2>
+      <p>Registra préstamos y cobra intereses automáticamente</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn activo" onclick="switchTab('tab-nuevo')">➕ Nuevo</button>
+      <button class="tab-btn" onclick="switchTab('tab-activos')">📋 Activos</button>
+      <button class="tab-btn" onclick="switchTab('tab-historial')">📁 Historial</button>
+      <button class="tab-btn" onclick="switchTab('tab-progreso-tia')">📊 Progreso</button>
+    </div>
+
+    <div id="tab-nuevo" class="tab-content activo">
+      <div class="prestamo-form">
+        <h3>Registrar nuevo préstamo</h3>
+        <div class="form-group">
+          <label class="form-label">¿A quién le prestas?</label>
+          <select class="form-select" id="tia-persona">
+            <option value="0">Giovanna Sinaí</option>
+            <option value="1">Fabiana Paola</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monto prestado ($)</label>
+          <input class="form-input" type="number" id="tia-monto" placeholder="ej: 5000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Motivo del préstamo</label>
+          <input class="form-input" type="text" id="tia-motivo" placeholder="ej: útiles escolares">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Plazo de pago (días)</label>
+          <select class="form-select" id="tia-plazo">
+            <option value="7">7 días</option>
+            <option value="14">14 días</option>
+            <option value="30" selected>30 días</option>
+            <option value="60">60 días</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tasa de interés por atraso (% mensual)</label>
+          <input class="form-input" type="number" id="tia-tasa" value="5" step="0.5">
+        </div>
+        <div class="alerta-box" style="margin-bottom:0.85rem;">
+          <strong>Nota educativa:</strong> Si no paga en el plazo, se cobra interés automáticamente para que aprenda sobre la responsabilidad financiera.
+        </div>
+        <button class="btn-primary" onclick="registrarPrestamo()">Registrar Préstamo</button>
+      </div>
+    </div>
+
+    <div id="tab-activos" class="tab-content">
+      <div id="prestamos-activos-lista"></div>
+    </div>
+
+    <div id="tab-historial" class="tab-content">
+      <div id="prestamos-historial-lista"></div>
+    </div>
+
+    <div id="tab-progreso-tia" class="tab-content">
+      <div id="progreso-tia-contenido"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PANEL GRETTY ===== -->
+<div id="panel-gretty" style="display:none;">
+  <div class="header">
+    <div class="header-logo">👩‍👧 Panel de Gretty</div>
+    <button class="header-salir" onclick="salir()">Salir</button>
+  </div>
+  <div class="contenido" style="padding-bottom:2rem;">
+    <div class="banco-hero" style="background:linear-gradient(135deg,#7e22ce,#a855f7);">
+      <h2>Hola, Gretty 💜</h2>
+      <p>Aquí puedes ver el progreso de Giovanna Sinaí y Fabiana Paola</p>
+    </div>
+    <div id="gretty-contenido"></div>
+  </div>
+</div>
+
+<!-- ===== PANEL LECCION ===== -->
+<div id="leccion">
+  <div class="leccion-header">
+    <button class="leccion-back" onclick="cerrarLeccion()">←</button>
+    <span class="leccion-titulo" id="leccion-titulo-header">Semana 1</span>
+  </div>
+  <div class="leccion-body">
+    <div class="tabs">
+      <button class="tab-btn activo" onclick="switchTab('tab-leccion')">📖 Lección</button>
+      <button class="tab-btn" onclick="switchTab('tab-desafio')">🎯 Desafío</button>
+      <button class="tab-btn" onclick="switchTab('tab-quiz')">🧠 Quiz</button>
+    </div>
+    <div id="tab-leccion" class="tab-content activo" id="leccion-contenido"></div>
+    <div id="tab-desafio" class="tab-content" id="desafio-contenido"></div>
+    <div id="tab-quiz" class="tab-content" id="quiz-contenido"></div>
+  </div>
+</div>
+
+<!-- Modal confirmación pago -->
+<div id="modal-pago" style="display:none;" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-titulo">Confirmar Pago 💸</div>
+    <div id="modal-pago-detalle" style="font-size:0.85rem; color:var(--texto-suave); line-height:1.6;"></div>
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="cerrarModal('modal-pago')">Cancelar</button>
+      <button style="background:var(--verde);color:white;" onclick="confirmarPago()">✓ Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ======== DATOS ========
+const SOBRINAS = [
+  { nombre: 'Giovanna Sinaí', avatar: 'GS', color: '#8b5cf6', textColor: 'white' },
+  { nombre: 'Fabiana Paola', avatar: 'FP', color: '#f59e0b', textColor: '#78350f' }
+];
+
+const PREMIOS_SEMANA = [500,1000,1500,2000,2500,3000,3500,4000,4500,5000];
+const PREMIO_CERTIFICADO = 25000;
+
+const SEMANAS = [
+  // ══════════════ SEMANA 1: ¿QUÉ ES EL DINERO? ══════════════
+  {
+    titulo: '¿Qué es el dinero?',
+    icono: '💵',
+    color: '#ede9fe',
+    motiv: `El dinero no es magia, es una habilidad. Y tú ya diste el primer paso al aprenderla. Cada peso que entiendes hoy es un peso que te va a obedecer mañana. 💜 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>💵 Historia del Dinero</h3>
+        <p class="leccion-texto">Hace miles de años no existían los billetes. Si querías pan y tenías manzanas, tenías que encontrar a alguien con pan que quisiera manzanas. Eso se llama <strong>trueque</strong>. El problema: ¿y si nadie quería tus manzanas ese día? Te quedabas sin comer.</p>
+        <div class="info-box">📌 Por eso inventaron el dinero: un <strong>acuerdo social</strong> donde todos aceptamos que ciertos papeles y monedas tienen valor. No valen por lo que son físicamente, valen porque <em>todos creemos que valen</em>.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🇨🇱 El Peso Chileno y sus primos</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">Banco Central de Chile</div><div class="concepto-desc">El único que puede imprimir pesos. Decide cuánto dinero hay en el país para que los precios no se vuelvan locos.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Inflación (IPC)</div><div class="concepto-desc">Cuando los precios suben, tu dinero vale menos. Si hay 5% de inflación, con $1.000 hoy compras lo que antes costaba $952.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">UF (Unidad de Fomento)</div><div class="concepto-desc">Sube automáticamente con la inflación. Se usa en arriendos y créditos hipotecarios para proteger al que presta.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Dólar</div><div class="concepto-desc">Moneda de EE.UU. que se usa en Chile para el comercio internacional. Su precio en pesos cambia cada día.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>💡 Las 3 funciones del dinero</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">1. Medio de cambio</div><div class="concepto-desc">Lo usas para comprar cosas, sin necesitar trueque.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">2. Reserva de valor</div><div class="concepto-desc">Puedes guardarlo y usarlo mañana, la próxima semana o en 10 años.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">3. Unidad de cuenta</div><div class="concepto-desc">Mide cuánto valen las cosas y permite comparar precios.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">🛒 <strong>Ejemplo 1 — El supermercado:</strong> Cuando tu mamá compra $3.500 de pan, leche y huevos, está usando el dinero como <em>medio de cambio</em>. Sin dinero, tendría que llevar algo para intercambiar. Ese mismo ticket de $3.500 dentro de 2 años puede que no alcance para lo mismo si hubo inflación.</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">📱 <strong>Ejemplo 2 — El celular:</strong> Un iPhone que hoy cuesta $800.000 el año pasado costaba $650.000. Eso es la inflación en acción: el mismo objeto, más pesos. Por eso ahorrar en el colchón durante años es peligroso — tu dinero pierde poder.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Giovanna tiene $20.000 guardados hace 1 año en su cajita. La inflación este año fue del 6%. ¿Cuánto poder de compra perdió? ¿Qué podría haber hecho diferente?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Tu amiga dice "el dinero no importa, lo que importa es ser feliz". Tú sabes que eso es verdad, pero también sabes que el dinero te da opciones. ¿Qué le responderías?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Por qué crees que el dinero funciona si en realidad es solo papel?",
+      "Si hubiera inflación del 10% este año, ¿cómo afectaría tu vida cotidiana?",
+      "¿Preferirías tener $50.000 hoy o $60.000 en 2 años? ¿Por qué?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 1 · Ganas $500 🏆</div>
+      <div class="desafio-desc"><strong>Misión: El Detective del Dinero</strong><br><br>Esta semana vas a observar cómo fluye el dinero en tu casa y en tu entorno. Anota <strong>3 situaciones reales</strong> donde viste el dinero cumplir alguna de sus funciones:<br><br>• ¿Qué se compró o intercambió?<br>• ¿Qué función cumplió el dinero ahí?<br>• ¿Notaste algo con los precios (más caro que antes)?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tus 3 observaciones:</label>
+        <textarea id="desafio-respuesta-0" placeholder="Ej: Mi mamá pagó $1.800 el pan. Antes costaba $1.500 → inflación. El dinero fue medio de cambio."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Qué es el trueque?', ops: ['Intercambiar cosas sin dinero','Una tarjeta de crédito','Un tipo de banco','Una moneda digital'], c: 0 },
+      { p: '¿Quién crea los pesos chilenos?', ops: ['El Gobierno','El Banco Central de Chile','Los bancos privados','La CMF'], c: 1 },
+      { p: '¿Qué es la inflación?', ops: ['Cuando el dinero vale más','Cuando los precios bajan','Cuando los precios suben','Un tipo de préstamo'], c: 2 },
+      { p: 'Si hay 10% de inflación, algo que costaba $10.000...', ops: ['Ahora cuesta $9.000','Ahora cuesta $10.100','Ahora cuesta $11.000','No cambia de precio'], c: 2 },
+      { p: '¿Para qué sirve la UF en Chile?', ops: ['Para comprar dólares','Para protegerse de la inflación en créditos','Para pagar el IVA','Es otra moneda extranjera'], c: 1 }
+    ]
+  },
+
+  // ══════════════ SEMANA 2: PRESUPUESTO ══════════════
+  {
+    titulo: 'El Presupuesto',
+    icono: '📊',
+    color: '#fef9c3',
+    motiv: `Quien controla su presupuesto, controla su vida. Yo aprendí esto tarde y me costó estrés, noches sin dormir y deudas. Tú lo aprendes a los 13. Eso es un superpoder real. 🌟 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>📊 ¿Qué es un Presupuesto?</h3>
+        <p class="leccion-texto">Un presupuesto es un <strong>plan del dinero</strong>: decides antes qué vas a hacer con él, en lugar de gastarlo y preguntarte después "¿dónde se fue?". La mayoría de los adultos que tienen problemas económicos no es porque ganen poco — es porque nunca aprendieron a presupuestar.</p>
+        <div class="info-box">📌 La fórmula más importante de las finanzas:<br><strong>Ingresos − Gastos = Ahorro (o Deuda)</strong><br><br>Si el resultado es positivo → ahorras. Si es negativo → te endeudas.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🍕 Necesidades vs Deseos</h3>
+        <p class="leccion-texto">Esta es la distinción más difícil de las finanzas personales porque nuestro cerebro quiere convertir los deseos en necesidades.</p>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">✅ Necesidades</div><div class="concepto-desc">Sin esto no puedes vivir bien: comida, transporte al colegio, ropa básica, útiles escolares.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">🎮 Deseos</div><div class="concepto-desc">Los quieres pero podrías vivir sin ellos: último modelo de zapatillas, suscripción a streaming, helado diario.</div></div>
+        </div>
+        <div class="alerta-box">⚠️ <strong>El truco del marketing:</strong> Las tiendas y redes sociales invierten millones para hacerte sentir que los deseos son necesidades urgentes. Cuando sientas esa presión, pregúntate: "¿Estaré bien sin esto en 30 días?"</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>📐 La Regla 50/30/20</h3>
+        <p class="leccion-texto">Una guía sencilla para organizar cualquier ingreso:</p>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">50% — Necesidades</div><div class="concepto-desc">Comida, transporte, arriendo, colegio, salud.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">30% — Deseos</div><div class="concepto-desc">Salidas, entretenimiento, ropa extra, snacks.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">20% — Ahorro</div><div class="concepto-desc">Guardas para metas o emergencias. Este se aparta PRIMERO.</div></div>
+        </div>
+        <div class="info-box">💡 <strong>El orden importa:</strong> Primero separa el ahorro. Luego paga necesidades. Lo que sobre es para deseos. Nunca al revés.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">👟 <strong>Ejemplo 1 — Las zapatillas de moda:</strong> Fabiana quiere unas zapatillas Nike de $89.000. Tiene $90.000 de mesada acumulada. Si las compra, se queda sin fondo de emergencia ni ahorro. La pregunta no es "¿me gustan?" sino "¿puedo permitirmélas SIN afectar mis otras metas?"</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">🛍 <strong>Ejemplo 2 — La salida del fin de semana:</strong> Giovanna tiene $15.000 y sus amigas quieren ir al mall, comer y al cine. El plan sale $12.000. ¿Va o no va? Antes de decidir debe saber: ¿tengo cubierto el transporte de esta semana? ¿Debo algo? Si todo está en orden, puede ir y disfrutar sin culpa.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Recibes $30.000 de cumpleaños. Tus opciones: a) guardar todo, b) gastar todo en ropa, c) guardar $6.000 y usar $24.000 en lo que quieras. Aplicando la regla 50/30/20: ¿cuánto irá a cada categoría?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Tu amiga te dice "la vida es una sola, hay que gastar en lo que te hace feliz ahora". Tiene 14 años y ya debe $20.000 a su mamá. ¿Qué le dirías sin sonar aburrida?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "Si recibieras $50.000 hoy, ¿cómo los repartirías con la regla 50/30/20?",
+      "¿Cuáles son tus 3 gastos más frecuentes? ¿Cuáles son necesidades y cuáles deseos?",
+      "¿Por qué crees que tantos adultos gastan más de lo que ganan?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 2 · Ganas $1.000 🏆</div>
+      <div class="desafio-desc"><strong>Misión: Mi Presupuesto Real de 7 días</strong><br><br>Durante esta semana anota <strong>todos los gastos</strong> que ocurren en tu entorno (los tuyos o los de tu familia). Al final clasifica cada uno:<br><br>• ¿Fue necesidad o deseo?<br>• ¿Aplicando la regla 50/30/20, cómo quedó la semana?<br>• ¿Qué cambiarías?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tu registro de la semana:</label>
+        <textarea id="desafio-respuesta-1" placeholder="Lunes: pan $1.200 (necesidad), datos celular $3.000 (deseo)..."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: 'La fórmula básica del presupuesto es:', ops: ['Gastos + Ahorro = Ingresos','Ingresos − Gastos = Ahorro o Deuda','Ahorro × Ingresos = Gastos','Ingresos + Gastos = Deuda'], c: 1 },
+      { p: '¿Cuál es una NECESIDAD real?', ops: ['Zapatillas Nike de moda','Pasaje de micro al colegio','Suscripción de streaming','Helado diario'], c: 1 },
+      { p: 'En la regla 50/30/20, ¿qué debes apartar PRIMERO?', ops: ['Los gastos de necesidades','Los deseos del mes','El 20% de ahorro','Los impuestos'], c: 2 },
+      { p: 'Si recibes $20.000 y aplicas 50/30/20, ¿cuánto ahorras?', ops: ['$10.000','$6.000','$4.000','$2.000'], c: 2 },
+      { p: '¿Qué hace el marketing para que gastes más?', ops: ['Te informa objetivamente','Convierte deseos en "necesidades urgentes"','Te ayuda a ahorrar','Nada, solo informa'], c: 1 }
+    ]
+  },
+
+  // ══════════════ SEMANA 3: EL AHORRO ══════════════
+  {
+    titulo: 'El Ahorro',
+    icono: '🐷',
+    color: '#d1fae5',
+    motiv: `Empecé a ahorrar de verdad a los 28 años. Perdí 14 años de interés compuesto. No quiero eso para ustedes. Un poco ahora vale mucho más que mucho después. 🐷 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>🐷 ¿Por qué ahorrar si "falta mucho" para crecer?</h3>
+        <p class="leccion-texto">El tiempo es el ingrediente más poderoso del ahorro. Ahorrar $5.000 al mes a los 14 años genera mucho más dinero que ahorrar $15.000 al mes a los 30. Eso no es un slogan motivacional — es matemática pura.</p>
+        <div class="info-box">📌 <strong>Tipos de ahorro que debes tener:</strong><br>• <strong>Fondo de emergencia:</strong> 3 meses de gastos para imprevistos<br>• <strong>Ahorro con meta:</strong> Para una compra específica con fecha<br>• <strong>Ahorro a largo plazo:</strong> Para la vejez (APV en Chile)</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>✨ El Interés Compuesto — la 8ª maravilla del mundo</h3>
+        <p class="leccion-texto">Albert Einstein (dicen) llamó al interés compuesto "la octava maravilla del mundo". La idea: ganas interés sobre el interés que ya ganaste. Tu dinero crece como una bola de nieve cuesta abajo.</p>
+        <div class="ejemplo-box">💡 Si depositas $10.000 una sola vez al 5% anual:<br>• Año 1: $10.500<br>• Año 5: $12.763<br>• Año 10: $16.289<br>• Año 20: $26.533<br>• Año 30: $43.219<br><strong>No hiciste nada. Solo lo dejaste.</strong></div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🏦 Opciones de ahorro en Chile</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">CuentaRUT (BancoEstado)</div><div class="concepto-desc">Gratis para todos los chilenos. Se abre desde los 14 años (con representante). Tasa baja pero 100% segura.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Cuenta de ahorro</div><div class="concepto-desc">Paga entre 0,5% y 3% anual. Ideal para metas de corto plazo como un viaje o un celular.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">APV</div><div class="concepto-desc">Ahorro para la vejez. El Estado te da un bono del 15% de lo que depositas. Rentabilidad histórica: 5-7% anual.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Fondos Mutuos</div><div class="concepto-desc">Para metas de más de 3 años. Puede rendir 5-8% anual pero con algo de riesgo.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">🎧 <strong>Ejemplo 1 — Los auriculares soñados:</strong> Giovanna quiere unos audífonos inalámbricos de $45.000. Si ahorra $5.000 al mes, los tiene en 9 semanas. Pero si los compra con tarjeta de crédito en 6 cuotas al 3,5% mensual, termina pagando $53.500. Ahorrar primero le ahorra $8.500.</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">🏖 <strong>Ejemplo 2 — El viaje de verano:</strong> Fabiana quiere ir a la playa en enero (4 meses). El viaje cuesta $80.000. Si empieza a guardar hoy: $80.000 ÷ 4 meses = $20.000 al mes. Es alcanzable si reduce gastos en deseos. La meta hace que el sacrificio valga la pena.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Tu prima te ofrece prestarte $30.000 para comprarte hoy la polera que tanto quieres. Tú podrías ahorrarlos en 3 semanas. ¿Pides el préstamo o esperas? ¿Qué cambia si la polera es edición limitada?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Tienes $50.000 ahorrados. Quieres usarlos para ir al concierto de tu artista favorita ($45.000). Pero hace 2 días tu mochila se rompió y necesitas una nueva ($25.000). ¿Qué decides? ¿Cómo organizas?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Cuánto ahorrarías al mes si pudieras? ¿Para qué meta?",
+      "¿Qué gastarías menos para poder ahorrar más?",
+      "Si ahorras $3.000 semanales desde ahora, ¿cuánto tendrías en 1 año?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 3 · Ganas $1.500 🏆</div>
+      <div class="desafio-desc"><strong>Misión: Mi Primera Meta de Ahorro</strong><br><br>Define UNA meta de ahorro real y concreta:<br><br>• ¿Qué quieres comprar o lograr?<br>• ¿Cuánto cuesta exactamente?<br>• ¿Cuánto puedes ahorrar a la semana?<br>• ¿En cuántas semanas lo logras?<br>• ¿Qué deseo vas a reducir para lograrlo?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tu meta y plan:</label>
+        <textarea id="desafio-respuesta-2" placeholder="Meta: Audífonos Sony · Precio: $45.000 · Ahorro semanal: $5.000 · Semanas: 9 · Voy a gastar menos en: helados diarios"></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Qué es el interés compuesto?', ops: ['Pagar impuestos al ahorrar','Ganar interés sobre el interés ya ganado','Una multa del banco','El costo de una cuenta corriente'], c: 1 },
+      { p: '¿Desde qué edad se puede abrir una CuentaRUT en Chile?', ops: ['18 años','16 años','14 años (con representante)','Solo adultos'], c: 2 },
+      { p: '¿Para qué sirve el fondo de emergencia?', ops: ['Para ir de vacaciones','Para imprevistos como enfermedades o reparaciones','Para comprar deseos','Para pagar TDC'], c: 1 },
+      { p: 'Si ahorras $5.000/mes por 12 meses al 3% anual, ¿tienes más o menos de $60.000?', ops: ['Menos, el banco cobra comisión','Exactamente $60.000','Más, porque ganas intereses','Depende del dólar'], c: 2 },
+      { p: '¿Qué hace el APV en Chile?', ops: ['Te presta dinero','Te da un bono del 15% por ahorrar para la vejez','Reemplaza la AFP','Paga el IVA'], c: 1 }
+    ]
+  },
+
+  // ══════════════ SEMANA 4: CUENTA CORRIENTE ══════════════
+  {
+    titulo: 'Cuenta Corriente',
+    icono: '🏦',
+    color: '#dbeafe',
+    motiv: `Un banco es una herramienta, no un amigo ni un enemigo. Aprende a usarlo tú — no dejes que él te use a ti. 🏦 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>🏦 ¿Qué es una Cuenta Corriente?</h3>
+        <p class="leccion-texto">Es la cuenta bancaria más completa para adultos. Te permite depositar, retirar, transferir y pagar con total libertad, todos los días. Es diferente a la cuenta de ahorro porque está diseñada para el movimiento diario del dinero.</p>
+        <div class="info-box">📌 <strong>Cuándo se puede tener en Chile:</strong> Formalmente desde los 18 años, aunque los bancos pueden exigir historial crediticio. Antes de eso, la CuentaRUT (BancoEstado) es la alternativa gratuita disponible desde los 14.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🔧 Servicios que incluye</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">Tarjeta de débito</div><div class="concepto-desc">Pagar con el dinero que ya tienes. Sin deuda, sin interés.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Transferencias</div><div class="concepto-desc">Enviar y recibir dinero instantáneamente. En Chile son gratis entre cuentas del mismo banco y tienen costo mínimo entre distintos bancos.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Cartola mensual</div><div class="concepto-desc">Historial completo de todos tus movimientos. Como un diario automático de tu dinero.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Línea de crédito</div><div class="concepto-desc">Dinero extra que el banco te presta. Cobra intereses altos. Solo para emergencias reales.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>⚠️ El Sobregiro: la trampa más común</h3>
+        <p class="leccion-texto">El sobregiro ocurre cuando gastas más de lo que tienes en tu cuenta. El banco "te presta" ese dinero automáticamente, pero cobra intereses brutales: hasta 50% anual en Chile.</p>
+        <div class="alerta-box">⚠️ <strong>Ejemplo real:</strong> Tienes $5.000 en tu cuenta y compras algo de $8.000. El banco paga la diferencia ($3.000) y te cobra interés por esos $3.000. Si no los repones rápido, la deuda crece. Muchos adultos caen en un ciclo de sobregiro perpetuo.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">💸 <strong>Ejemplo 1 — La transferencia del cumpleaños:</strong> La abuela quiere regalarte $20.000 de cumpleaños pero vive lejos. Con una cuenta bancaria, puede transferírtelos en 10 segundos desde su celular. Sin cuenta, tendría que enviarte efectivo por correo o esperar verte. La cuenta te da acceso.</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">📱 <strong>Ejemplo 2 — La app del banco:</strong> Hoy los bancos tienen apps donde puedes ver tu saldo en tiempo real, hacer transferencias, pagar cuentas y bloquear tu tarjeta si la pierdes. Tu mamá o tu tía seguramente tienen una. Pídeles que te muestren cómo funciona — es parte de aprender.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Tienes $3.000 en tu cuenta y olvidaste que tienes un pago automático de $5.000 mañana. Si no depositas algo antes de medianoche, entrarás en sobregiro. ¿Qué haces? ¿A quién le pides ayuda?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Tu amigo dice que no necesita banco porque usa solo efectivo. ¿Cuáles son las ventajas y desventajas de cada opción? ¿En qué situaciones el efectivo gana?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Cuál banco usaría y por qué? (Investiga BancoEstado, Banco de Chile, Santander)",
+      "¿Qué diferencia hay entre una transferencia y un pago con débito?",
+      "¿Por qué el sobregiro puede convertirse en una trampa difícil de salir?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 4 · Ganas $2.000 🏆</div>
+      <div class="desafio-desc"><strong>Misión: Investiga el Banco de tu Familia</strong><br><br>Pregúntale a un adulto de confianza (mamá, tía) qué banco usa y explora su app o sitio web. Responde:<br><br>• ¿Qué banco es y qué tipo de cuenta tiene?<br>• ¿Cobra comisión mensual? ¿Cuánto?<br>• ¿Qué servicios tiene la app?<br>• ¿Qué es lo más útil que encontraste?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tu investigación:</label>
+        <textarea id="desafio-respuesta-3" placeholder="Banco: BancoEstado · Cuenta: CuentaRUT · Comisión: $0 · App: permite ver saldo, transferir, pagar..."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Qué es la cartola bancaria?', ops: ['Un tipo de tarjeta','El historial de todos tus movimientos de dinero','Un préstamo del banco','La clave de tu cuenta'], c: 1 },
+      { p: '¿Qué es el sobregiro?', ops: ['Tener mucho dinero en la cuenta','Gastar más de lo que tienes y el banco presta la diferencia','Un tipo de inversión','Una comisión mensual'], c: 1 },
+      { p: 'La CuentaRUT de BancoEstado se puede abrir desde...', ops: ['18 años','16 años','14 años con representante','Solo adultos con sueldo'], c: 2 },
+      { p: '¿Para qué sirve la línea de crédito?', ops: ['Para ahorrar más','Para emergencias reales, cobra intereses altos','Para recibir transferencias','Para invertir'], c: 1 },
+      { p: '¿Cuánto puede cobrar el sobregiro en Chile al año?', ops: ['2%','10%','Hasta 50% anual','Nada, es gratis'], c: 2 }
+    ]
+  },
+
+  // ══════════════ SEMANA 5: TARJETA DE DÉBITO ══════════════
+  {
+    titulo: 'Tarjeta de Débito',
+    icono: '💳',
+    color: '#ede9fe',
+    motiv: `Tu información bancaria vale más que cualquier cosa que puedas comprar con ella. Protégela como si fuera el tesoro más importante. Porque lo es. 🔒 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>💳 Tarjeta de Débito — gastar lo que tienes</h3>
+        <p class="leccion-texto">La tarjeta de débito es la herramienta financiera más segura para el día a día. Funciona simple: si tienes $10.000 en tu cuenta, puedes gastar hasta $10.000. Si no tienes saldo, no puedes pagar. Sin deuda, sin intereses, sin sorpresas.</p>
+        <div class="info-box">📌 <strong>Diferencia clave:</strong><br>Débito = usas TU dinero<br>Crédito = usas dinero PRESTADO que debes devolver con intereses</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🔒 Seguridad: lo que nadie te enseña</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">PIN secreto</div><div class="concepto-desc">Nunca se lo digas a nadie. Ni a tu mejor amiga. Ni a quien diga ser del banco por teléfono. El banco JAMÁS te pedirá tu clave.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Compras online</div><div class="concepto-desc">Solo en sitios con 🔒 (https). Revisa que el nombre del sitio sea correcto. Los estafadores crean sitios casi idénticos.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Si pierdes la tarjeta</div><div class="concepto-desc">Bloquéala INMEDIATAMENTE desde la app del banco. No esperes. Cada minuto que pasa es riesgo.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Pagos sin contacto</div><div class="concepto-desc">Útiles y rápidos, pero acumula los recibos para verificar que no te cobraron de más.</div></div>
+        </div>
+        <div class="alerta-box">⚠️ <strong>Phishing:</strong> Te llega un mensaje de "BancoEstado" diciéndote que tu cuenta será bloqueada. Tienes que hacer clic en un link y poner tu clave. ESO ES UNA ESTAFA. Los bancos nunca hacen eso. Jamás pongas tu clave en un link que llegó por WhatsApp o correo.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">🛒 <strong>Ejemplo 1 — El doble cobro:</strong> Giovanna compra papas fritas con débito sin contacto. La máquina "no respondió" y la vendedora dice "no pasó, pase de nuevo". Si Giovanna pasa dos veces, le cobran dos veces. Solución: siempre pide el comprobante y revisa la app antes de pagar de nuevo.</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">📲 <strong>Ejemplo 2 — La oferta de Instagram:</strong> Fabiana ve en Instagram unas zapatillas a mitad de precio. El sitio pide su número de tarjeta, fecha de vencimiento y CVV. ¿Debería hacerlo? Solo si el sitio es conocido, tiene 🔒 en la URL y ha visto reseñas reales. En caso de duda, mejor buscar el producto en Falabella.com o Paris.cl directamente.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Recibes un WhatsApp de un número desconocido que dice ser BancoEstado: "Tu CuentaRUT está bloqueada. Haz clic aquí e ingresa tu RUT y clave para desbloquear." ¿Qué haces paso a paso?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Tu amigo te pide que le prestes tu tarjeta de débito "solo para una compra rápida". Tiene tu PIN porque se lo dijiste hace meses. ¿Qué haces? ¿Por qué es riesgoso incluso entre amigos?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Cuáles son 3 señales de que un sitio web podría ser una estafa?",
+      "¿Por qué NUNCA deberías compartir tu PIN, ni con tu mejor amigo/a?",
+      "¿Qué harías exactamente si pierdes tu tarjeta en el mall?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 5 · Ganas $2.500 🏆</div>
+      <div class="desafio-desc"><strong>Misión: Detecta el Peligro</strong><br><br>Busca en Internet o en tu celular 2 ejemplos de estafas bancarias reales que hayan ocurrido en Chile (phishing, clonación de tarjetas, etc.). Responde:<br><br>• ¿Qué tipo de estafa fue?<br>• ¿Cómo engañaron a la víctima?<br>• ¿Cómo se podría haber evitado?<br>• ¿Cómo te proteges tú?</div>
+      <div class="desafio-input-area">
+        <label>Escribe lo que encontraste:</label>
+        <textarea id="desafio-respuesta-4" placeholder="Estafa 1: Phishing de BancoEstado · Cómo: email falso pidiendo clave · Se evita: nunca clicar links sospechosos..."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Qué usa la tarjeta de débito?', ops: ['Dinero prestado por el banco','El saldo de tu propia cuenta','Una línea de crédito','El sobregiro'], c: 1 },
+      { p: '¿Qué es el phishing?', ops: ['Un pago en cuotas','Estafa para robar datos bancarios por medios digitales','Un tipo de cuenta bancaria','Una forma de ahorrar'], c: 1 },
+      { p: 'Si la máquina dice "error" al pagar con débito, debes:', ops: ['Pagar de nuevo inmediatamente','Revisar la app antes de volver a pagar','Asumir que no cobró','Pedir dinero prestado'], c: 1 },
+      { p: '¿Un banco real te pedirá tu clave por WhatsApp?', ops: ['Sí, si es urgente','Solo en emergencias','A veces','Nunca, jamás'], c: 3 },
+      { p: 'Si pierdes tu tarjeta en el mall, lo primero es:', ops: ['Volver a buscarla','Llamar a tus papás','Bloquearla inmediatamente desde la app','Esperar a que aparezca'], c: 2 }
+    ]
+  },
+
+  // ══════════════ SEMANA 6: TARJETA DE CRÉDITO ══════════════
+  {
+    titulo: 'Tarjeta de Crédito',
+    icono: '💥',
+    color: '#fee2e2',
+    motiv: `La TDC me costó $400.000 de intereses en un año por no entenderla. Hoy la uso todos los meses y no pago un peso de interés. La diferencia: saber cómo funciona. 💳 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>💥 La Tarjeta de Crédito: arma de doble filo</h3>
+        <p class="leccion-texto">Una TDC es un préstamo instantáneo. El banco paga por ti ahora y tú le devuelves después. Usada correctamente: conveniencia y beneficios sin costo. Usada mal: deuda que crece sola y puede tardarse años en pagar.</p>
+        <div class="alerta-box">⚠️ En Chile, las tarjetas de casas comerciales (Falabella, Ripley, La Polar) son las más peligrosas. Sus tasas pueden superar el 40% anual. Una deuda de $100.000 sin pagar un año se convierte en $140.000.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>📐 Términos que debes dominar</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">CAE (Carga Anual Equivalente)</div><div class="concepto-desc">El costo real total del crédito por año, incluyendo todo. Si el CAE es 35%, pagas un 35% extra anual por usar ese dinero.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Pago mínimo</div><div class="concepto-desc">Lo menos que puedes pagar para no quedar moroso. Pero si pagas solo esto, la deuda casi no baja y los intereses se acumulan.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Pago total</div><div class="concepto-desc">Lo que debes pagar para NO pagar intereses ese mes. Si puedes pagar el total siempre, la TDC es gratis para ti.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">DICOM / Boletín Comercial</div><div class="concepto-desc">El registro de deudores morosos de Chile. Si entras, ningún banco ni arriendo te aprobará. Puede afectarte por años.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>✅ La regla de oro de la TDC</h3>
+        <div class="info-box">💡 <strong>Regla de oro:</strong> Solo compra con TDC lo que ya tienes en tu cuenta de débito. Al llegar el estado de cuenta, paga el TOTAL. Así usas el crédito como una herramienta de conveniencia y nunca pagas intereses.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">👗 <strong>Ejemplo 1 — La polera en 12 cuotas:</strong> Fabiana ve una polera de $24.000 en Falabella y la compra en 12 cuotas "sin interés". Pero ¿es realmente sin interés? Revisa el CAE en el contrato. A veces el precio "en cuotas" ya incluye el interés dentro. Si el precio al contado es $22.000 y en cuotas es $24.000, pagaste $2.000 de interés igualmente.</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">📲 <strong>Ejemplo 2 — El cyberday:</strong> Es el Cyber Monday y hay descuentos reales. Giovanna tiene $80.000 en su cuenta. Ve una tablet de $150.000 al 30% de descuento = $105.000. "Solo" necesita $25.000 más, que puede poner en la TDC en 3 cuotas. ¿Conviene? Solo si puede pagar esas 3 cuotas sin afectar su presupuesto mensual. Si no, la "oferta" puede salirle cara.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Tu mamá tiene una deuda de $200.000 en la TDC de Ripley al 38% anual y solo puede pagar el mínimo cada mes. ¿Cuánto crecerá esa deuda en 1 año si no paga más? ¿Qué le recomendarías hacer?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Una amiga de 18 años acaba de sacar su primera TDC con límite de $300.000. Está emocionada y quiere comprarse ropa, salidas y tecnología. ¿Qué le dirías para que no la meta en problemas?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Qué diferencia real hay entre pagar el mínimo y pagar el total cada mes?",
+      "¿Por qué las tiendas como Falabella tienen sus propias tarjetas de crédito?",
+      "Si tuvieras una TDC con $100.000 de límite, ¿cómo la usarías responsablemente?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 6 · Ganas $3.000 🏆</div>
+      <div class="desafio-desc"><strong>Misión: El Simulador Real</strong><br><br>Usa la calculadora de TDC de esta app y simula estas 2 situaciones:<br><br>• Situación A: $80.000 en 6 cuotas al 3,5%<br>• Situación B: $80.000 en 24 cuotas al 3,5%<br><br>Anota y responde:<br>• ¿Cuánto pagas en total en cada caso?<br>• ¿Cuánto son solo intereses?<br>• ¿Qué aprendiste de esta comparación?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tus resultados y conclusión:</label>
+        <textarea id="desafio-respuesta-5" placeholder="Caso A: cuota $14.xxx · total $xxx · intereses $xxx / Caso B: cuota $xxx · total $xxx · intereses $xxx / Conclusión: ..."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Qué es el CAE?', ops: ['El color de la tarjeta','La Carga Anual Equivalente, costo real total del crédito','El límite de crédito','El número secreto de la tarjeta'], c: 1 },
+      { p: 'Si pagas solo el mínimo de tu TDC cada mes:', ops: ['La deuda desaparece en 1 año','La deuda crece por los intereses acumulados','Recibes un descuento del banco','No pasa nada especial'], c: 1 },
+      { p: '¿Qué es el DICOM?', ops: ['Una tarjeta de débito especial','Registro de deudores morosos que afecta tu historial por años','Un tipo de ahorro','El estado de cuenta mensual'], c: 1 },
+      { p: 'La regla de oro de la TDC es:', ops: ['Comprar todo en cuotas para pagar menos','Solo comprar lo que ya tienes en tu cuenta y pagar el total','Usar el mínimo siempre','Tener varias tarjetas para distribuir la deuda'], c: 1 },
+      { p: '¿Qué tipo de TDC suele tener las tasas más altas en Chile?', ops: ['Tarjetas bancarias Visa','Tarjetas de casas comerciales (Falabella, Ripley)','Tarjetas de débito prepago','MasterCard de bancos'], c: 1 }
+    ]
+  },
+
+  // ══════════════ SEMANA 7: PRÉSTAMOS ══════════════
+  {
+    titulo: 'Préstamos',
+    icono: '🤝',
+    color: '#fef9c3',
+    motiv: `Entender cómo funcionan los préstamos me permitió negociar mejor, pagar menos y no dejarme engañar. El conocimiento es poder — especialmente con el dinero. 🤝 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>🤝 ¿Cómo funciona un préstamo de verdad?</h3>
+        <p class="leccion-texto">Un préstamo es un contrato: alguien te da dinero ahora y tú te comprometes a devolvérselo en el futuro, más un extra llamado interés. Ese interés es el "precio" de usar dinero ajeno. Mientras más alto el interés y más largo el plazo, más caro te sale el préstamo.</p>
+        <div class="info-box">📌 <strong>Las 4 partes de todo préstamo:</strong><br>• <strong>Capital:</strong> Lo que pediste prestado<br>• <strong>Interés:</strong> El costo de usarlo<br>• <strong>Plazo:</strong> El tiempo para pagar<br>• <strong>Cuota:</strong> Lo que pagas cada período</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>📐 Tipos de préstamo en Chile</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">Crédito de consumo</div><div class="concepto-desc">Para comprar cosas. Tasa: 15-40% anual. El más común y el más caro después de la TDC.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Crédito hipotecario</div><div class="concepto-desc">Para comprar una casa. Tasa: 3-6% anual. Plazos de hasta 30 años. El más barato porque hay garantía.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Crédito estudiantil</div><div class="concepto-desc">Para pagar la universidad. CAE o Fondo Solidario. Se empieza a pagar después de titularse.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">El "Banco de la Tía Liss"</div><div class="concepto-desc">Un préstamo entre personas cercanas. También tiene condiciones: monto, plazo y si hay interés por atraso.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🧮 La fórmula del interés simple</h3>
+        <div class="ejemplo-box">💡 <strong>Interés = Capital × Tasa × Tiempo</strong><br><br>Pediste $50.000 al 5% mensual por 3 meses:<br>Interés = $50.000 × 0,05 × 3 = $7.500<br>Total a devolver = $57.500<br><br><strong>Eso es exactamente lo que ocurre en el Banco de la Tía Liss cuando no pagas a tiempo.</strong></div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">🎒 <strong>Ejemplo 1 — La mochila y el préstamo:</strong> A Giovanna se le rompió la mochila. Necesita $25.000 urgente. Tiene 3 opciones: a) pedir prestado a la Tía Liss y devolver en 2 semanas sin interés, b) usar la TDC de su mamá en 3 cuotas (con interés), c) esperar 3 semanas y ahorrar. ¿Cuál es más barata? Depende: si la Tía Liss no cobra interés y puedes pagar en 2 semanas, esa es la opción más barata.</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">🏠 <strong>Ejemplo 2 — El sueño de la casa propia:</strong> Tus papás quizás paguen un dividendo (cuota del crédito hipotecario). Si compraron una casa de $100.000.000 a 25 años al 4% anual, su cuota mensual es aproximadamente $520.000 y en total pagarán unos $156.000.000. Pagaron $56.000.000 solo en intereses. Eso es lo que cuesta comprar en cuotas.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">La Tía Liss te presta $10.000 para comprar algo urgente. El plazo es 2 semanas. Si no pagas en ese tiempo, cobra 5% mensual de interés. Han pasado 6 semanas y no has pagado. ¿Cuánto debes ahora? ¿Qué podrías haber hecho diferente?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Un compañero de tu mamá ofrece prestarle $500.000 "sin papeles ni banco" al 10% mensual. ¿Es una buena idea? ¿Qué riesgos tiene pedir prestado a un particular sin contrato?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Cuándo tiene sentido pedir un préstamo? ¿Y cuándo NO tiene sentido?",
+      "¿Por qué el crédito hipotecario tiene menor tasa que el crédito de consumo?",
+      "¿Qué aprenden sobre el dinero cuando ven que la Tía Liss cobra interés por atraso?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 7 · Ganas $3.500 🏆</div>
+      <div class="desafio-desc"><strong>Misión: Soy el Banco</strong><br><br>Imagina que tienes $100.000 ahorrados y tu prima te pide prestados $30.000. Diseña las condiciones de tu préstamo:<br><br>• ¿Le prestas? ¿Por qué?<br>• ¿Qué tasa de interés cobras y por qué esa?<br>• ¿Qué plazo le das?<br>• ¿Qué pasa si no te paga a tiempo?<br>• ¿Cambiaría algo si fuera una extraña en vez de tu prima?</div>
+      <div class="desafio-input-area">
+        <label>Escribe las condiciones de tu préstamo:</label>
+        <textarea id="desafio-respuesta-6" placeholder="Sí le prestaría porque... / Tasa: x% mensual porque... / Plazo: x días / Si no paga: ... / Con extraña: ..."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Qué es el capital en un préstamo?', ops: ['Los intereses cobrados','El dinero original que pediste prestado','El plazo de pago','La cuota mensual'], c: 1 },
+      { p: 'Si pediste $100.000 al 10% mensual por 2 meses, ¿cuánto de interés pagas?', ops: ['$10.000','$20.000','$15.000','$5.000'], c: 1 },
+      { p: '¿Qué tipo de crédito suele ser el más barato en Chile?', ops: ['Crédito de consumo','TDC de casa comercial','Crédito hipotecario','Línea de sobregiro'], c: 2 },
+      { p: '¿Qué pasa si no pagas un préstamo en el Banco de la Tía Liss a tiempo?', ops: ['Se cancela la deuda','Se cobra interés por los días de atraso','La Tía Liss lo olvida','Pagas menos'], c: 1 },
+      { p: '¿Por qué es riesgoso pedir prestado a un particular sin contrato?', ops: ['No es riesgoso','No hay protección legal ni condiciones claras','Los bancos son más caros','No genera intereses'], c: 1 }
+    ]
+  },
+
+  // ══════════════ SEMANA 8: INVERSIÓN ══════════════
+  {
+    titulo: 'Inversión Básica',
+    icono: '📈',
+    color: '#d1fae5',
+    motiv: `Si hubiese invertido $10.000 al mes desde los 20 años, hoy tendría millones. No lo hice. Ustedes sí pueden. El tiempo que tienen es el activo más valioso del planeta. 📈 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>📈 ¿Qué es invertir y por qué es diferente a ahorrar?</h3>
+        <p class="leccion-texto">Ahorrar es guardar dinero de forma segura. Invertir es poner ese dinero a trabajar para que crezca más rápido, asumiendo algún nivel de riesgo. La diferencia clave: el ahorro casi no pierde, pero tampoco crece mucho. La inversión puede crecer mucho, pero también puede bajar.</p>
+        <div class="info-box">📌 Regla fundamental:<br>Mayor riesgo → mayor ganancia potencial<br>Menor riesgo → menor ganancia (pero más seguro)<br><br>La clave es elegir el riesgo según tu meta y cuándo necesitas el dinero.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🇨🇱 Opciones reales de inversión en Chile</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">Fondo Mutuo</div><div class="concepto-desc">Varios inversores juntan dinero y un gestor lo invierte. Desde $1.000. Rentabilidad histórica: 3-8% anual según el tipo.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Acciones (Bolsa de Santiago)</div><div class="concepto-desc">Comprar una parte de una empresa chilena. Alto riesgo, alta ganancia potencial. Para plazos largos (5+ años).</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">APV</div><div class="concepto-desc">Para la jubilación. El Estado te devuelve el 15% de lo que depositas. La mejor rentabilidad garantizada de Chile.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Depósito a Plazo</div><div class="concepto-desc">Le prestas plata al banco por X meses y él te paga interés fijo. Seguro pero menor rentabilidad: 0,5-3% anual.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">☕ <strong>Ejemplo 1 — El café de los millones:</strong> Giovanna gasta $1.500 diarios en un café en el kiosco del colegio. Son $30.000 al mes. Si en vez de eso invirtiera esos $30.000 en un fondo mutuo al 7% anual desde los 14 hasta los 65 años, tendría más de $120.000.000. ¿Vale el café esos $120 millones?</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">📱 <strong>Ejemplo 2 — Invertir en empresas que usas:</strong> Fabiana usa TikTok, compra en Falabella y tiene servicio de Entel. Falabella (FALABELLA en la Bolsa de Santiago) es una empresa que cotiza en bolsa. Si le gustan sus productos y confía en la empresa, podría eventualmente comprar acciones. Muchos inversionistas exitosos parten invirtiendo en lo que conocen.</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Tienes $200.000 ahorrados y no los necesitas por 5 años. Opciones: a) dejarlos en CuentaRUT (3% anual), b) fondo mutuo conservador (5% anual con algo de riesgo), c) acciones de Falabella (potencial 10% pero puede bajar). ¿Cuál eliges y por qué?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Un influencer de Instagram promete duplicar tu dinero en 30 días invirtiendo en criptomonedas. Te pide que transfieras $50.000 para empezar. ¿Qué señales de alerta ves? ¿Qué harías?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿En qué empresa chilena que conoces invertirías? ¿Por qué?",
+      "¿Cuál es la diferencia entre riesgo y pérdida segura?",
+      "¿Por qué esperar más años para jubilarse puede resultar en mucho más dinero?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 8 · Ganas $4.000 🏆</div>
+      <div class="desafio-desc"><strong>Misión: Mi Portafolio Imaginario</strong><br><br>Tienes $100.000 imaginarios para invertir. Elige cómo repartirlos entre estas opciones reales de Chile y justifica tu decisión:<br><br>• Fondo Mutuo conservador (3-4% anual)<br>• Fondo Mutuo balanceado (5-7% anual)<br>• Acciones Bolsa de Santiago<br>• Depósito a Plazo<br><br>¿Cuánto pones en cada uno y por qué?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tu portafolio y razonamiento:</label>
+        <textarea id="desafio-respuesta-7" placeholder="$40.000 en fondo mutuo conservador porque... / $30.000 en acciones porque... / $30.000 en depósito porque..."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Cuál es la diferencia principal entre ahorrar e invertir?', ops: ['Son exactamente lo mismo','Invertir tiene riesgo pero puede crecer más; ahorrar es más seguro','Ahorrar da más ganancias siempre','Invertir no tiene riesgo'], c: 1 },
+      { p: '¿Qué ventaja especial tiene el APV en Chile?', ops: ['No se puede perder dinero','El Estado devuelve el 15% de lo depositado','Es el único fondo sin riesgo','Solo para personas sobre 40 años'], c: 1 },
+      { p: 'Un fondo mutuo conservador en Chile renta históricamente:', ops: ['Entre 20% y 30% anual','Entre 3% y 5% anual','Siempre exactamente 2%','No renta nada'], c: 1 },
+      { p: '¿Qué señal de alerta tiene la oferta de duplicar dinero en 30 días?', ops: ['Ninguna, parece legítimo','Es una promesa imposible o fraude (pirámide)','Solo aplica a criptomonedas','Es una inversión normal de alto riesgo'], c: 1 },
+      { p: '¿Qué significa que una empresa "cotice en bolsa"?', ops: ['Que es del Estado','Que cualquiera puede comprar una parte de ella como inversión','Que no tiene deudas','Que es la más grande de Chile'], c: 1 }
+    ]
+  },
+
+  // ══════════════ SEMANA 9: IMPUESTOS ══════════════
+  {
+    titulo: 'Impuestos y Leyes',
+    icono: '📜',
+    color: '#fef9c3',
+    motiv: `Los impuestos no son el enemigo. El enemigo es no entenderlos y pagar de más o equivocarte. Con conocimiento, cumples la ley y no pagas un peso de más. 📜 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>📜 ¿Para qué existen los impuestos?</h3>
+        <p class="leccion-texto">Los impuestos son el aporte de todos para financiar lo que usamos en común: hospitales, colegios públicos, carabineros, carreteras, parques. Sin impuestos, estos servicios no existirían o costarían mucho más de manera privada. Pagar impuestos correctamente es un acto de ciudadanía.</p>
+        <div class="info-box">📌 <strong>Principales impuestos en Chile que te afectan hoy o pronto:</strong><br>• <strong>IVA (19%):</strong> En casi todo lo que compras<br>• <strong>Impuesto a la Renta:</strong> Sobre lo que ganas cuando trabajas<br>• <strong>Impuesto de Timbres:</strong> En documentos financieros y créditos</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🧾 Boleta y Factura: tus derechos de consumidor</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">Boleta</div><div class="concepto-desc">Para personas naturales. Es tu comprobante y protección legal. Si el producto falla, la boleta prueba que lo compraste.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Factura</div><div class="concepto-desc">Para empresas. Permite recuperar el IVA pagado. Más formal que la boleta.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">SII (Servicio de Impuestos Internos)</div><div class="concepto-desc">El organismo que fiscaliza que todos paguen sus impuestos. Tiene acceso a tus cuentas bancarias si hay irregularidades.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">Declaración de Renta</div><div class="concepto-desc">Una vez al año (abril) debes reportar tus ingresos. A veces el SII te devuelve dinero; otras veces debes pagar más.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🌍 Ejemplos reales del día a día</h3>
+        <div class="ejemplo-box">🛍 <strong>Ejemplo 1 — El IVA en el supermercado:</strong> Cuando tu mamá paga $5.000 por un producto, de esos $5.000 aproximadamente $798 son IVA que van directo al Estado. Si compra $100.000 en el mes, pagó $15.966 de IVA sin pensarlo. Por eso Chile puede financiar colegios y hospitales públicos.</div>
+        <div class="ejemplo-box" style="margin-top:0.5rem;">💼 <strong>Ejemplo 2 — Cuando trabajes:</strong> Cuando Giovanna tenga su primer trabajo y gane, por ejemplo, $600.000 al mes, no recibirá esos $600.000 completos. Se descontará AFP (10%), salud (7%) y si su sueldo es alto, impuesto a la renta. Es normal y legal. Saber esto evita la sorpresa de ver el primer sueldo y sentir que "robaron".</div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Situación para debatir</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación 1</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Compras en una tienda y el vendedor te dice "sin boleta te hago 10% de descuento". ¿Aceptas o no? ¿Qué consecuencias tiene para ti y para el sistema que aceptes?</p>
+          <div class="debate-titulo">Situación 2</div>
+          <p style="font-size:0.88rem;">Tu futuro jefe te ofrece pagarte "en efectivo sin contrato" para evitar los descuentos de AFP y salud. A corto plazo recibes más dinero. ¿Cuáles son los riesgos a largo plazo?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Crees que los impuestos en Chile son justos? ¿Por qué?",
+      "Si fueras Ministra de Hacienda, ¿qué impuesto crearías o eliminarías?",
+      "¿Qué diferencia hace en la jubilación cotizar o no cotizar en la AFP?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Semana 9 · Ganas $4.500 🏆</div>
+      <div class="desafio-desc"><strong>Misión: El IVA en tu Vida</strong><br><br>La próxima vez que vayas al supermercado o a una tienda, pide la boleta y analízala:<br><br>• ¿Cuánto costó el producto?<br>• Calcula el 19% de IVA: ¿cuánto fue solo de impuesto?<br>• ¿Cuánto habría costado sin IVA?<br>• ¿Qué sientes al saber que parte de ese dinero financia hospitales y colegios?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tu análisis de la boleta:</label>
+        <textarea id="desafio-respuesta-8" placeholder="Producto: leche · Precio total: $1.800 · IVA (19%): $288 · Sin IVA: $1.512 · Lo que siento: ..."></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Cuánto es el IVA en Chile?', ops: ['10%','15%','19%','25%'], c: 2 },
+      { p: '¿Para qué sirven los impuestos?', ops: ['Para enriquecer políticos','Financiar hospitales, colegios, carreteras y servicios públicos','Solo para pagar la deuda del país','Para financiar empresas privadas'], c: 1 },
+      { p: '¿Qué es el SII?', ops: ['Servicio de Inversión Internacional','Servicio de Impuestos Internos, fiscaliza el pago de impuestos','Sistema de Interés Individual','Seguro de Inversión Interbancaria'], c: 1 },
+      { p: 'Si aceptas "sin boleta a cambio de descuento", ¿qué problema hay?', ops: ['Ninguno, es un trato justo','Facilitas la evasión de impuestos y pierdes protección legal','El vendedor gana menos','El SII te puede multar a ti'], c: 1 },
+      { p: '¿Cuándo se hace la Declaración de Renta en Chile?', ops: ['Enero','Agosto','Abril de cada año','Cada 5 años'], c: 2 }
+    ]
+  },
+
+  // ══════════════ SEMANA 10: GRADUACIÓN ══════════════
+  {
+    titulo: '¡Graduación Financiera!',
+    icono: '🎓',
+    color: '#fef9c3',
+    motiv: `Hace 10 semanas empezaste sin saber casi nada de finanzas. Hoy sabes más que el 80% de los adultos en Chile. Eso no es exageración — es la verdad. Úsalo bien. Te quiero muchísimo. 🎓💜 — Tía Liss`,
+    leccion: `
+      <div class="leccion-seccion">
+        <h3>🎓 ¡Lo lograste! Esto es lo que ahora sabes</h3>
+        <p class="leccion-texto">Completaste las 10 semanas de la Academia Financiera de la Tía Liss. Lo que aprendiste no es teoría — es un conjunto de herramientas reales que van a cambiar tu relación con el dinero para siempre.</p>
+        <div class="ejemplo-box">
+          ✅ Semana 1: El dinero es un acuerdo social. La inflación erosiona tu poder de compra.<br>
+          ✅ Semana 2: El presupuesto es tu plan. Necesidades vs deseos. La regla 50/30/20.<br>
+          ✅ Semana 3: El ahorro + tiempo = magia. Interés compuesto. APV y CuentaRUT.<br>
+          ✅ Semana 4: La cuenta corriente, la cartola y el peligro del sobregiro.<br>
+          ✅ Semana 5: Débito = tu dinero. Protección ante fraudes y phishing.<br>
+          ✅ Semana 6: TDC = dinero prestado. CAE, DICOM y la regla de oro.<br>
+          ✅ Semana 7: Préstamos: capital, interés, plazo, cuota. El Banco de la Tía.<br>
+          ✅ Semana 8: Invertir vs ahorrar. Fondos mutuos, acciones, APV.<br>
+          ✅ Semana 9: IVA, boleta, SII. Los impuestos y tus derechos.<br>
+          ✅ Semana 10: Tu plan financiero de vida.
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗺️ Tu Plan Financiero de Vida — Las 5 decisiones más importantes</h3>
+        <div class="concepto-grid">
+          <div class="concepto-item"><div class="concepto-titulo">1. Abre tu CuentaRUT ahora</div><div class="concepto-desc">A los 14 años ya puedes. Es gratis, segura y el primer paso hacia la independencia financiera.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">2. Presupuesta siempre</div><div class="concepto-desc">Antes de gastar, planifica. Saber a dónde va tu dinero es la base de todo lo demás.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">3. Ahorra el 20% desde el primer sueldo</div><div class="concepto-desc">No importa cuánto ganes. Ese hábito, sostenido en el tiempo, te hace libre.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">4. Entiende todo lo que firmas</div><div class="concepto-desc">Nunca firmes un contrato que no entiendes. Pregunta el CAE, el plazo, las multas. Siempre.</div></div>
+          <div class="concepto-item"><div class="concepto-titulo">5. Invierte lo antes posible</div><div class="concepto-desc">Cuando trabajes, destina algo al APV desde el día 1. Tu yo de 65 años te lo agradecerá.</div></div>
+        </div>
+      </div>
+      <div class="leccion-seccion">
+        <h3>🗣 ¿Tú qué harías? — Gran debate final</h3>
+        <div class="debate-box">
+          <div class="debate-titulo">Situación Final</div>
+          <p style="font-size:0.88rem;margin-bottom:0.5rem;">Tienes 25 años, acabas de conseguir tu primer trabajo con sueldo de $600.000. ¿Cómo manejarías ese primer sueldo aplicando todo lo que aprendiste? Haz el presupuesto completo, decide qué ahorras, qué inviertes y qué te permites gastar en deseos.</p>
+          <div class="debate-titulo">Reflexión</div>
+          <p style="font-size:0.88rem;">¿Qué fue lo más sorprendente que aprendiste en estas 10 semanas? ¿Qué cambiarías en tu vida desde hoy?</p>
+        </div>
+      </div>`,
+    debatePreguntas: [
+      "¿Cuál fue el concepto más importante que aprendiste? ¿Por qué?",
+      "Con todo lo que sabes ahora, ¿qué le dirías a tu yo de hace 10 semanas?",
+      "¿Qué le enseñarías a una amiga que no hizo esta academia?"
+    ],
+    desafio: `<div class="desafio-card">
+      <div class="desafio-titulo">🎯 Desafío Final · Ganas $5.000 + Certificado $25.000 🏆🎓</div>
+      <div class="desafio-desc"><strong>Misión: Mi Plan Financiero de Vida</strong><br><br>Escribe tu plan financiero personal real. Esto no es un ejercicio — es tu hoja de ruta.<br><br>• ¿Qué meta de ahorro tendrás este año?<br>• ¿Cuándo abrirás tu CuentaRUT?<br>• ¿Qué deseo reducirás para ahorrar más?<br>• ¿Cómo te protegerás de las deudas?<br>• ¿Qué mensaje le das a tu yo del futuro sobre el dinero?</div>
+      <div class="desafio-input-area">
+        <label>Escribe tu plan de vida financiero completo:</label>
+        <textarea id="desafio-respuesta-9" placeholder="Mi meta de ahorro: ... / Abriré mi cuenta en: ... / Reduciré: ... / Me protegeré de deudas: ... / Mensaje a mi futuro yo: ..." style="min-height:120px;"></textarea>
+      </div>
+    </div>`,
+    quiz: [
+      { p: '¿Cuándo es el mejor momento para empezar a ahorrar e invertir?', ops: ['Cuando tengas mucho dinero','Cuando seas adulto','Lo antes posible, incluso desde joven','Cuando te cases'], c: 2 },
+      { p: '¿Qué es la CuentaRUT?', ops: ['Una tarjeta de crédito para jóvenes','Cuenta bancaria gratuita del BancoEstado ligada al RUT','Un fondo mutuo','Una forma de pagar impuestos'], c: 1 },
+      { p: 'La regla de oro del ahorro es:', ops: ['Ahorrar cuando sobre dinero al fin del mes','Primero ahorrar, luego gastar con lo que queda','Gastar en lo que da felicidad y ver qué queda','Ahorrar solo para emergencias'], c: 1 },
+      { p: 'Si ganas $500.000/mes y aplicas 50/30/20, ¿cuánto inviertes/ahorras?', ops: ['$25.000','$50.000','$100.000','$150.000'], c: 2 },
+      { p: 'Antes de firmar cualquier contrato financiero siempre debes:', ops: ['Firmar rápido para no perder la oportunidad','Entender el CAE, plazo, multas y condiciones completas','Preguntar solo si es más de $1.000.000','Hacer lo que diga el vendedor'], c: 1 }
+    ]
+  }
+];
+
+const LOGROS_DEF = [ = [
+  { id: 'primera_leccion', nombre: 'Primera lección', icon: '📖' },
+  { id: 'primer_quiz', nombre: 'Primer quiz', icon: '🧠' },
+  { id: 'primer_desafio', nombre: 'Primer desafío', icon: '🎯' },
+  { id: 'semana3', nombre: 'Semana 3 completa', icon: '🐷' },
+  { id: 'semana5', nombre: 'Semana 5 completa', icon: '💳' },
+  { id: 'semana10', nombre: '¡Graduada!', icon: '🎓' },
+  { id: 'sin_deuda', nombre: 'Sin deudas', icon: '✨' },
+  { id: 'ahorradora', nombre: 'Ahorradora', icon: '💰' },
+  { id: 'simuladora', nombre: 'Usó el simulador', icon: '🧮' }
+];
+
+// ======== ESTADO ========
+let usuarioActual = null; // 0, 1 = sobrinas, 'tia'
+let semanaAbierta = null;
+let pagoAConfirmar = null;
+let quizActual = { respuestas: {}, enviado: false };
+
+function getEstado(idx) {
+  const key = 'finanzas_sobrina_' + idx;
+  const d = localStorage.getItem(key);
+  if (d) return JSON.parse(d);
+  return { semanaActual: 0, puntos: 0, semanasCompletadas: [], desafiosGuardados: {}, logros: [] };
+}
+function setEstado(idx, estado) {
+  localStorage.setItem('finanzas_sobrina_' + idx, JSON.stringify(estado));
+}
+function getPrestamos() {
+  const d = localStorage.getItem('finanzas_prestamos');
+  return d ? JSON.parse(d) : [];
+}
+function setPrestamos(p) {
+  localStorage.setItem('finanzas_prestamos', JSON.stringify(p));
+}
+
+function irALogin() {
+  document.getElementById('bienvenida-splash').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+}
+function actualizarLogin() {
+  [0,1].forEach(i => {
+    const e = getEstado(i);
+    document.getElementById('nombre-s' + i).textContent = SOBRINAS[i].nombre;
+    document.getElementById('nivel-s' + i).textContent = `Semana ${e.semanaActual+1} · ⭐ ${e.puntos} pts`;
+  });
+}
+actualizarLogin();
+
+function entrar(idx) {
+  usuarioActual = idx;
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const s = SOBRINAS[idx];
+  document.getElementById('app-avatar').textContent = s.avatar;
+  document.getElementById('app-avatar').style.background = s.color;
+  document.getElementById('app-avatar').style.color = s.textColor;
+  document.getElementById('app-nombre').textContent = s.nombre;
+  mostrarSeccion('inicio');
+}
+function entrarTia() {
+  usuarioActual = 'tia';
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('panel-tia').style.display = 'block';
+  renderPrestamosActivos();
+  renderPrestamosHistorial();
+}
+function salir() {
+  document.getElementById('bienvenida-splash').style.display = 'flex';
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('panel-tia').style.display = 'none';
+  document.getElementById('panel-gretty').style.display = 'none';
+  document.getElementById('leccion').style.display = 'none';
+  actualizarLogin();
+}
+
+// ======== NAVEGACIÓN ========
+function mostrarSeccion(sec) {
+  ['inicio','banco','logros'].forEach(s => {
+    document.getElementById('sec-'+s).style.display = s === sec ? 'block' : 'none';
+    document.getElementById('nav-'+s).classList.toggle('activo', s === sec);
+  });
+  if (sec === 'inicio') renderInicio();
+  if (sec === 'banco') renderBanco();
+  if (sec === 'logros') renderLogros();
+}
+
+// ======== INICIO ========
+function renderInicio() {
+  const e = getEstado(usuarioActual);
+  const s = SOBRINAS[usuarioActual];
+  document.getElementById('bienvenida-nombre').textContent = `¡Hola, ${s.nombre}! 👋`;
+  document.getElementById('bienvenida-semana').textContent = e.semanaActual + 1;
+  document.getElementById('stat-puntos').textContent = e.puntos;
+  document.getElementById('stat-semana').textContent = (e.semanaActual+1)+'/10';
+  document.getElementById('stat-dinero').textContent = '$' + ((e.dineroGanado||0)).toLocaleString('es-CL');
+  // deuda
+  const prestamos = getPrestamos().filter(p => p.persona == usuarioActual && p.estado !== 'pagado');
+  let deudaTotal = 0;
+  const hoy = Date.now();
+  prestamos.forEach(p => {
+    const diasPasados = Math.floor((hoy - p.fechaInicio) / 86400000);
+    const diasPlazo = p.plazo;
+    if (diasPasados > diasPlazo) {
+      const mesesAtraso = (diasPasados - diasPlazo) / 30;
+      deudaTotal += p.monto * (1 + (p.tasa/100) * mesesAtraso);
+    } else {
+      deudaTotal += p.monto;
+    }
+  });
+  document.getElementById('stat-deuda').textContent = deudaTotal > 0 ? '$' + Math.round(deudaTotal).toLocaleString('es-CL') : '$0';
+
+  let html = '';
+  SEMANAS.forEach((sem, i) => {
+    const completada = e.semanasCompletadas.includes(i);
+    const activa = i === e.semanaActual;
+    const bloqueada = i > e.semanaActual;
+    let badge = bloqueada ? '<span class="semana-badge badge-bloqueada">🔒 Bloqueada</span>' :
+                completada ? '<span class="semana-badge badge-completada">✓ Completada</span>' :
+                '<span class="semana-badge badge-activa">● Activa</span>';
+    let progress = completada ? 100 : activa ? 30 : 0;
+    html += `<div class="semana-card ${bloqueada?'bloqueada':''}" onclick="${bloqueada?'mostrarToast(\'Completa la semana anterior primero\')':'abrirLeccion('+i+')'}">
+      <div class="semana-header">
+        <div class="semana-icono" style="background:${sem.color}">${sem.icono}</div>
+        <div class="semana-info">
+          <div class="semana-num">Semana ${i+1}</div>
+          <div class="semana-titulo">${sem.titulo}</div>
+          ${badge}
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+    </div>`;
+  });
+  document.getElementById('lista-semanas').innerHTML = html;
+}
+
+// ======== LECCION ========
+function abrirLeccion(idx) {
+  semanaAbierta = idx;
+  quizActual = { respuestas: {}, enviado: false };
+  const sem = SEMANAS[idx];
+  document.getElementById('leccion-titulo-header').textContent = `Semana ${idx+1}: ${sem.titulo}`;
+  const motivHtml = sem.motiv ? `<div style="background:linear-gradient(135deg,#3b0764,#6d28d9);border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1.25rem;display:flex;gap:12px;align-items:flex-start;">
+    <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-family:var(--font-titulo);font-weight:800;font-size:0.85rem;color:#3c2c00;flex-shrink:0;">TL</div>
+    <div>
+      <div style="font-size:0.7rem;color:#c4b5fd;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">💜 Mensaje de la Tía Liss</div>
+      <div style="font-size:0.85rem;color:#f3e8ff;line-height:1.6;font-style:italic;">"${sem.motiv}"</div>
+    </div>
+  </div>` : '';
+  const debateHtml = sem.debatePreguntas ? `<div style="background:var(--morado-muy-claro);border-radius:14px;padding:1.1rem;margin-top:0.75rem;">
+    <div style="font-family:var(--font-titulo);font-size:0.8rem;font-weight:700;color:var(--morado);margin-bottom:0.6rem;">💬 Preguntas para conversar con la Tía Liss esta semana:</div>
+    ${sem.debatePreguntas.map((p,i) => `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:0.82rem;color:var(--texto);"><span style="background:var(--morado);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:1px;">${i+1}</span><span>${p}</span></div>`).join('')}
+  </div>` : '';
+  document.getElementById('tab-leccion').innerHTML = motivHtml + sem.leccion + debateHtml;
+  document.getElementById('tab-desafio').innerHTML = sem.desafio + renderDesafioGuardado(idx);
+  renderQuiz(idx);
+  // Restaurar respuesta guardada
+  const e = getEstado(usuarioActual);
+  if (e.desafiosGuardados[idx]) {
+    const ta = document.getElementById('desafio-respuesta-' + idx);
+    if (ta) ta.value = e.desafiosGuardados[idx];
+  }
+  document.getElementById('leccion').style.display = 'block';
+  document.getElementById('tab-leccion').classList.add('activo');
+  document.getElementById('tab-desafio').classList.remove('activo');
+  document.getElementById('tab-quiz').classList.remove('activo');
+  // Logro: primera lección
+  darLogro('primera_leccion');
+  // Init calculators after DOM renders
+  setTimeout(() => {
+    if(idx===0) calcInflacion();
+    if(idx===1) calcPresupuesto();
+    if(idx===2) calcAhorro();
+    if(idx===5) calcTDC();
+    if(idx===6) calcPrestamo();
+    if(idx===7) calcInversion();
+  }, 80);
+}
+function renderDesafioGuardado(idx) {
+  return `<div style="margin-top:1rem; display:flex; gap:8px; flex-wrap:wrap;">
+    <button class="btn-primary" style="flex:1; min-width:120px;" onclick="guardarDesafio(${idx})">Guardar desafío</button>
+  </div>`;
+}
+function guardarDesafio(idx) {
+  const ta = document.getElementById('desafio-respuesta-' + idx);
+  if (!ta || !ta.value.trim()) { mostrarToast('Escribe algo primero'); return; }
+  const e = getEstado(usuarioActual);
+  e.desafiosGuardados[idx] = ta.value;
+  if (!e.logros.includes('primer_desafio')) { e.logros.push('primer_desafio'); e.puntos += 20; }
+  setEstado(usuarioActual, e);
+  mostrarToast('✓ Desafío guardado +20 puntos');
+  darLogro('ahorradora');
+}
+function cerrarLeccion() {
+  document.getElementById('leccion').style.display = 'none';
+  renderInicio();
+}
+
+// ======== QUIZ ========
+function renderQuiz(semIdx) {
+  const qs = SEMANAS[semIdx].quiz;
+  let html = '';
+  qs.forEach((q, qi) => {
+    html += `<div class="quiz-pregunta">
+      <div class="quiz-num">Pregunta ${qi+1} de ${qs.length}</div>
+      <div class="quiz-texto">${q.p}</div>
+      <div class="quiz-opciones">`;
+    q.ops.forEach((op, oi) => {
+      html += `<button class="quiz-opcion" id="q${qi}o${oi}" onclick="responderQuiz(${semIdx},${qi},${oi})">${op}</button>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `<button class="btn-primary" onclick="enviarQuiz(${semIdx})" style="margin-top:0.5rem;">Enviar respuestas →</button>`;
+  html += `<div id="quiz-resultado-${semIdx}" style="margin-top:1rem;"></div>`;
+  document.getElementById('tab-quiz').innerHTML = html;
+}
+function responderQuiz(semIdx, qi, oi) {
+  if (quizActual.enviado) return;
+  quizActual.respuestas[qi] = oi;
+  const qs = SEMANAS[semIdx].quiz;
+  qs[qi].ops.forEach((_, o) => {
+    const btn = document.getElementById(`q${qi}o${o}`);
+    btn.classList.remove('correcta','incorrecta');
+    if (o === oi) btn.style.borderColor = '#8b5cf6';
+    else btn.style.borderColor = '';
+  });
+}
+function enviarQuiz(semIdx) {
+  if (quizActual.enviado) return;
+  quizActual.enviado = true;
+  const qs = SEMANAS[semIdx].quiz;
+  let correctas = 0;
+  qs.forEach((q, qi) => {
+    const resp = quizActual.respuestas[qi];
+    q.ops.forEach((_, oi) => {
+      const btn = document.getElementById(`q${qi}o${oi}`);
+      if (oi === q.c) btn.classList.add('correcta');
+      else if (oi === resp && resp !== q.c) btn.classList.add('incorrecta');
+      btn.classList.add('respondida');
+    });
+    if (resp === q.c) correctas++;
+  });
+  const pct = Math.round((correctas/qs.length)*100);
+  const aprobado = pct >= 60;
+  const e = getEstado(usuarioActual);
+  if (!e.logros.includes('primer_quiz')) { e.logros.push('primer_quiz'); e.puntos += 30; }
+  if (aprobado && !e.semanasCompletadas.includes(semIdx)) {
+    e.semanasCompletadas.push(semIdx);
+    if (e.semanaActual === semIdx && semIdx < 9) e.semanaActual = semIdx + 1;
+    e.puntos += 50;
+    const premioSemana = PREMIOS_SEMANA[semIdx];
+    if (!e.premiosGanados) e.premiosGanados = {};
+    if (!e.premiosGanados[semIdx]) {
+      e.premiosGanados[semIdx] = premioSemana;
+      e.dineroGanado = (e.dineroGanado || 0) + premioSemana;
+    }
+    if (semIdx === 2) darLogro('semana3');
+    if (semIdx === 4) darLogro('semana5');
+    if (semIdx === 9) { darLogro('semana10'); e.certificado = true; e.dineroGanado = (e.dineroGanado || 0) + PREMIO_CERTIFICADO; }
+  }
+  setEstado(usuarioActual, e);
+  const premioSemana = PREMIOS_SEMANA[semIdx];
+  const eResult = getEstado(usuarioActual);
+  document.getElementById(`quiz-resultado-${semIdx}`).innerHTML = `
+    <div class="quiz-resultado">
+      <div class="quiz-score ${aprobado?'aprobado':'reprobado'}">${pct}%</div>
+      <p style="font-family:var(--font-titulo); font-size:1rem; margin:8px 0;">${aprobado ? '🎉 ¡Aprobaste!' : '😅 Puedes intentarlo de nuevo'}</p>
+      <p style="font-size:0.8rem; color:var(--texto-suave);">${correctas} de ${qs.length} correctas</p>
+      ${aprobado ? `<div style="background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:12px;padding:0.85rem;margin-top:0.75rem;text-align:center;">
+        <div style="font-family:var(--font-titulo);font-size:0.75rem;color:#3c2c00;text-transform:uppercase;letter-spacing:0.05em;">💰 Premio desbloqueado</div>
+        <div style="font-family:var(--font-titulo);font-size:1.8rem;font-weight:800;color:#3c2c00;">$${premioSemana.toLocaleString('es-CL')}</div>
+        <div style="font-size:0.72rem;color:#78350f;">La Tía Liss te entregará este premio 🎁</div>
+      </div>` : ''}
+      ${aprobado && semIdx < 9 ? '<p style="font-size:0.8rem; color:var(--verde); margin-top:8px;">🔓 ¡Semana '+(semIdx+2)+' desbloqueada!</p>' : ''}
+      ${aprobado && semIdx === 9 ? `<div style="background:linear-gradient(135deg,#1e0a3c,#4c1d95);border-radius:12px;padding:1rem;margin-top:0.75rem;text-align:center;border:2px solid #f59e0b;">
+        <div style="font-size:1.5rem;margin-bottom:4px;">🎓</div>
+        <div style="font-family:var(--font-titulo);color:#fde68a;font-size:0.9rem;font-weight:700;">¡CERTIFICADO DESBLOQUEADO!</div>
+        <div style="font-family:var(--font-titulo);color:#f59e0b;font-size:1.5rem;font-weight:800;margin:4px 0;">+ $25.000</div>
+        <div style="font-size:0.72rem;color:#c4b5fd;">Ve a la sección Logros para ver tu certificado</div>
+      </div>` : ''}
+    </div>`;
+}
+
+// ======== BANCO SOBRINA ========
+function renderBanco() {
+  const prestamos = getPrestamos().filter(p => p.persona == usuarioActual);
+  const hoy = Date.now();
+  let html = '';
+  if (prestamos.length === 0) {
+    html = '<div style="text-align:center; padding:2rem; color:var(--texto-suave); font-size:0.85rem;">No tienes préstamos activos 👍</div>';
+  } else {
+    prestamos.forEach((p, pi) => {
+      const realIdx = getPrestamos().indexOf(p);
+      const diasPasados = Math.floor((hoy - p.fechaInicio) / 86400000);
+      const diasRestantes = p.plazo - diasPasados;
+      let estado = p.estado || 'pendiente';
+      let montoFinal = p.monto;
+      let interesExtra = 0;
+      if (estado !== 'pagado' && diasRestantes < 0) {
+        estado = 'vencido';
+        const mesesAtraso = Math.abs(diasRestantes) / 30;
+        interesExtra = Math.round(p.monto * (p.tasa/100) * mesesAtraso);
+        montoFinal = p.monto + interesExtra;
+      }
+      html += `<div class="prestamo-item">
+        <div class="prestamo-row">
+          <div>
+            <div class="prestamo-persona">Préstamo #${pi+1}: ${p.motivo}</div>
+            <div class="prestamo-detalle">Capital: $${p.monto.toLocaleString('es-CL')} · Tasa: ${p.tasa}% mensual</div>
+            <div class="prestamo-detalle">${estado === 'pagado' ? 'Pagado ✓' : diasRestantes >= 0 ? `Vence en ${diasRestantes} días` : `Vencido hace ${Math.abs(diasRestantes)} días`}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="prestamo-monto">$${montoFinal.toLocaleString('es-CL')}</div>
+            <span class="prestamo-estado estado-${estado}">${estado === 'pendiente' ? 'Al día' : estado === 'vencido' ? '⚠️ Vencido' : '✓ Pagado'}</span>
+          </div>
+        </div>
+        ${estado === 'vencido' ? `<div class="interes-warning">⚠️ Se han sumado $${interesExtra.toLocaleString('es-CL')} de interés por atraso (${p.tasa}% mensual)</div>` : ''}
+        ${estado !== 'pagado' ? `<button class="btn-pagar" onclick="prepararPago(${pi})">Pagar $${montoFinal.toLocaleString('es-CL')}</button>` : ''}
+      </div>`;
+    });
+  }
+  document.getElementById('mis-prestamos-lista').innerHTML = html;
+  darLogro('simuladora');
+  simular();
+}
+
+// ======== SIMULADOR ========
+function simular() {
+  const monto = parseFloat(document.getElementById('sim-monto')?.value) || 0;
+  const cuotas = parseInt(document.getElementById('sim-cuotas')?.value) || 6;
+  const tasa = parseFloat(document.getElementById('sim-tasa')?.value) || 3.5;
+  if (monto <= 0) { document.getElementById('sim-resultado').style.display = 'none'; return; }
+  const tasaM = tasa / 100;
+  const cuota = monto * (tasaM * Math.pow(1+tasaM, cuotas)) / (Math.pow(1+tasaM, cuotas) - 1);
+  const total = cuota * cuotas;
+  const interes = total - monto;
+  document.getElementById('sim-resultado').style.display = 'block';
+  document.getElementById('sim-resultado').innerHTML = `
+    <div class="sim-fila"><span class="label">Cuota mensual:</span><span class="valor">$${Math.round(cuota).toLocaleString('es-CL')}</span></div>
+    <div class="sim-fila"><span class="label">Total de intereses:</span><span class="valor" style="color:var(--rojo)">$${Math.round(interes).toLocaleString('es-CL')}</span></div>
+    <div class="sim-fila sim-total"><span class="label" style="font-weight:600;">Total a pagar:</span><span class="valor">$${Math.round(total).toLocaleString('es-CL')}</span></div>
+    <div style="font-size:0.75rem; color:var(--texto-suave); margin-top:6px;">Pagando $${Math.round(monto).toLocaleString('es-CL')} en ${cuotas} cuotas al ${tasa}% mensual.</div>`;
+}
+
+// ======== PAGOS ========
+function prepararPago(prestamoIdx) {
+  const prestamos = getPrestamos().filter(p => p.persona == usuarioActual);
+  const p = prestamos[prestamoIdx];
+  const hoy = Date.now();
+  const diasPasados = Math.floor((hoy - p.fechaInicio) / 86400000);
+  const diasRestantes = p.plazo - diasPasados;
+  let montoFinal = p.monto;
+  if (diasRestantes < 0) {
+    const mesesAtraso = Math.abs(diasRestantes) / 30;
+    montoFinal = Math.round(p.monto * (1 + (p.tasa/100) * mesesAtraso));
+  }
+  pagoAConfirmar = { prestamoIdx, montoFinal, persona: usuarioActual };
+  document.getElementById('modal-pago-detalle').innerHTML = `
+    Estás a punto de registrar el pago de:<br><br>
+    <strong>Monto: $${montoFinal.toLocaleString('es-CL')}</strong><br>
+    Motivo: ${p.motivo}<br><br>
+    ¿Confirmas el pago a la Tía?`;
+  document.getElementById('modal-pago').style.display = 'flex';
+}
+function confirmarPago() {
+  const { prestamoIdx, montoFinal } = pagoAConfirmar;
+  const all = getPrestamos();
+  let count = 0;
+  all.forEach((p, i) => {
+    if (p.persona == usuarioActual) {
+      if (count === prestamoIdx) {
+        all[i].estado = 'pagado';
+        all[i].montoPagado = montoFinal;
+        all[i].fechaPago = Date.now();
+      }
+      count++;
+    }
+  });
+  setPrestamos(all);
+  cerrarModal('modal-pago');
+  mostrarToast('✓ Pago registrado. ¡Bien hecho!');
+  darLogro('sin_deuda');
+  renderBanco();
+}
+function cerrarModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+// ======== LOGROS ========
+function darLogro(id) {
+  if (usuarioActual === 'tia') return;
+  const e = getEstado(usuarioActual);
+  if (!e.logros.includes(id)) {
+    e.logros.push(id);
+    setEstado(usuarioActual, e);
+  }
+}
+function renderLogros() {
+  const e = getEstado(usuarioActual);
+  let html = '';
+  LOGROS_DEF.forEach(l => {
+    const ganado = e.logros.includes(l.id);
+    html += `<div class="logro-item ${ganado?'ganado':''}">
+      <div class="logro-icon">${ganado ? l.icon : '🔒'}</div>
+      <div class="logro-nombre">${l.nombre}</div>
+    </div>`;
+  });
+  document.getElementById('logros-grid').innerHTML = html;
+  // Render glosario
+  const glosario = [
+    {t:'Inflación',d:'Aumento general de precios. Si hay 5% de inflación, lo que hoy cuesta $1.000, el año que viene costará $1.050.'},
+    {t:'Interés',d:'El costo de usar dinero prestado. Si pediste $10.000 al 10%, le debes $1.000 extra.'},
+    {t:'Interés compuesto',d:'Ganar interés sobre el interés. Tu dinero crece cada vez más rápido con el tiempo.'},
+    {t:'Capital',d:'El monto original de dinero, antes de sumar intereses.'},
+    {t:'Plazo',d:'El tiempo que tienes para pagar un préstamo o el tiempo que dura una inversión.'},
+    {t:'Presupuesto',d:'Plan que muestra cuánto dinero entra y cuánto sale cada mes.'},
+    {t:'Ahorro',d:'Dinero que guardas para usarlo después. Diferente a invertir: el ahorro es seguro.'},
+    {t:'Inversión',d:'Poner dinero en algo que puede crecer, pero con riesgo de perder.'},
+    {t:'TDC (Tarjeta de Crédito)',d:'Tarjeta que te presta dinero del banco. Si no pagas, cobra intereses muy altos.'},
+    {t:'Débito',d:'Tarjeta que usa tu propio dinero. Sin deuda, sin intereses.'},
+    {t:'CAE',d:'Carga Anual Equivalente. El costo real total de un crédito expresado por año.'},
+    {t:'DICOM',d:'Registro de deudores morosos en Chile. Si apareces ahí, los bancos no te prestan.'},
+    {t:'IVA',d:'Impuesto al Valor Agregado. En Chile es el 19% que se agrega a casi todo lo que compras.'},
+    {t:'AFP',d:'Administradora de Fondos de Pensiones. Guarda el 10% de tu sueldo para cuando te jubiles.'},
+    {t:'APV',d:'Ahorro Previsional Voluntario. Ahorras extra para la vejez y el Estado te da un bono del 15%.'},
+    {t:'Fondo Mutuo',d:'Varios inversores juntan dinero y un experto lo invierte. Riesgo bajo a medio.'},
+    {t:'Sobregiro',d:'Cuando gastas más dinero del que tienes en tu cuenta. El banco te cobra intereses altos.'},
+    {t:'Amortización',d:'Proceso de ir pagando poco a poco una deuda con cuotas periódicas.'},
+    {t:'UF (Unidad de Fomento)',d:'Unidad de medida en Chile que sube con la inflación. Se usa en créditos hipotecarios.'},
+    {t:'Tasa de interés',d:'El porcentaje que se cobra o paga por usar dinero. Se expresa mensual o anual.'},
+  ];
+  let gHtml = glosario.map(g => `<div style="border-bottom:1px solid var(--borde);padding:6px 0;">
+    <div style="font-family:var(--font-titulo);font-size:0.82rem;font-weight:600;color:var(--mo);">${g.t}</div>
+    <div style="font-size:0.78rem;color:var(--txt2);line-height:1.5;margin-top:2px;">${g.d}</div>
+  </div>`).join('');
+  const gEl = document.getElementById('glosario-contenido');
+  if (gEl) gEl.innerHTML = gHtml;
+  // Progreso detalle
+  let prog = '';
+  SEMANAS.forEach((sem, i) => {
+    const completada = e.semanasCompletadas.includes(i);
+    const premio = PREMIOS_SEMANA[i];
+    const ganado = e.premiosGanados && e.premiosGanados[i];
+    prog += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--gris-borde); font-size:0.82rem;">
+      <span>${sem.icono} S${i+1}: ${sem.titulo}</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="font-size:0.7rem;color:${ganado?'var(--verde)':'var(--texto-suave)'};">${ganado?'💰 $'+premio.toLocaleString('es-CL'):'$'+premio.toLocaleString('es-CL')}</span>
+        <span style="color:${completada?'var(--verde)':'var(--texto-suave)'};">${completada ? '✓' : i === e.semanaActual ? '●' : '🔒'}</span>
+      </div>
+    </div>`;
+  });
+  const totalGanado = e.dineroGanado || 0;
+  const certGanado = e.certificado || false;
+  prog += `<div style="margin-top:1rem;background:${totalGanado>0?'linear-gradient(135deg,#f59e0b,#d97706)':'var(--gris-claro)'};border-radius:12px;padding:0.85rem;text-align:center;">
+    <div style="font-size:0.7rem;font-weight:600;color:${totalGanado>0?'#3c2c00':'var(--texto-suave)'};">💰 Total ganado hasta ahora</div>
+    <div style="font-family:var(--font-titulo);font-size:1.4rem;font-weight:800;color:${totalGanado>0?'#3c2c00':'var(--texto-suave)'};">$${totalGanado.toLocaleString('es-CL')}</div>
+    <div style="font-size:0.7rem;color:${totalGanado>0?'#78350f':'var(--texto-suave)'};">La Tía Liss te entregará este dinero real 🎁</div>
+  </div>`;
+  document.getElementById('progreso-detalle').innerHTML = prog;
+  // Show certificate if graduated
+  const certSection = document.getElementById('cert-section');
+  if (certGanado && certSection) {
+    certSection.style.display = 'block';
+    document.getElementById('cert-nombre').textContent = SOBRINAS[usuarioActual].nombre;
+  }
+}
+
+// ======== BANCO TIA ========
+function registrarPrestamo() {
+  const persona = parseInt(document.getElementById('tia-persona').value);
+  const monto = parseFloat(document.getElementById('tia-monto').value);
+  const motivo = document.getElementById('tia-motivo').value.trim();
+  const plazo = parseInt(document.getElementById('tia-plazo').value);
+  const tasa = parseFloat(document.getElementById('tia-tasa').value);
+  if (!monto || monto <= 0) { mostrarToast('Ingresa un monto válido'); return; }
+  if (!motivo) { mostrarToast('Escribe el motivo del préstamo'); return; }
+  const prestamos = getPrestamos();
+  prestamos.push({ persona, monto, motivo, plazo, tasa, fechaInicio: Date.now(), estado: 'pendiente' });
+  setPrestamos(prestamos);
+  document.getElementById('tia-monto').value = '';
+  document.getElementById('tia-motivo').value = '';
+  mostrarToast(`✓ Préstamo de $${monto.toLocaleString('es-CL')} a ${SOBRINAS[persona].nombre} registrado`);
+  switchTab('tab-activos');
+  renderPrestamosActivos();
+}
+function renderPrestamosActivos() {
+  const hoy = Date.now();
+  const all = getPrestamos().filter(p => p.estado !== 'pagado');
+  if (all.length === 0) {
+    document.getElementById('prestamos-activos-lista').innerHTML = '<div style="text-align:center; padding:2rem; color:var(--texto-suave); font-size:0.85rem;">No hay préstamos activos</div>';
+    return;
+  }
+  let html = '';
+  all.forEach((p, i) => {
+    const diasPasados = Math.floor((hoy - p.fechaInicio) / 86400000);
+    const diasRestantes = p.plazo - diasPasados;
+    const vencido = diasRestantes < 0;
+    let montoFinal = p.monto;
+    let interesExtra = 0;
+    if (vencido) {
+      const mesesAtraso = Math.abs(diasRestantes) / 30;
+      interesExtra = Math.round(p.monto * (p.tasa/100) * mesesAtraso);
+      montoFinal = p.monto + interesExtra;
+    }
+    html += `<div class="prestamo-item">
+      <div class="prestamo-row">
+        <div>
+          <div class="prestamo-persona">${SOBRINAS[p.persona].nombre} — ${p.motivo}</div>
+          <div class="prestamo-detalle">Capital: $${p.monto.toLocaleString('es-CL')} · Tasa: ${p.tasa}% mensual</div>
+          <div class="prestamo-detalle">${vencido ? `Vencido hace ${Math.abs(diasRestantes)} días` : `Vence en ${diasRestantes} días`}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="prestamo-monto">$${montoFinal.toLocaleString('es-CL')}</div>
+          <span class="prestamo-estado ${vencido?'estado-vencido':'estado-pendiente'}">${vencido?'⚠️ Con interés':'Al día'}</span>
+        </div>
+      </div>
+      ${interesExtra > 0 ? `<div class="interes-warning">+$${interesExtra.toLocaleString('es-CL')} de interés por atraso</div>` : ''}
+      <button class="btn-pagar" onclick="marcarPagadoTia(${i})" style="background:var(--verde);">✓ Marcar como pagado</button>
+    </div>`;
+  });
+  document.getElementById('prestamos-activos-lista').innerHTML = html;
+}
+function marcarPagadoTia(visibleIdx) {
+  const all = getPrestamos();
+  let activos = all.filter(p => p.estado !== 'pagado');
+  const target = activos[visibleIdx];
+  const realIdx = all.indexOf(target);
+  if (realIdx !== -1) {
+    const hoy = Date.now();
+    const diasPasados = Math.floor((hoy - all[realIdx].fechaInicio) / 86400000);
+    const diasRestantes = all[realIdx].plazo - diasPasados;
+    let montoFinal = all[realIdx].monto;
+    if (diasRestantes < 0) {
+      const mesesAtraso = Math.abs(diasRestantes) / 30;
+      montoFinal = Math.round(all[realIdx].monto * (1 + (all[realIdx].tasa/100) * mesesAtraso));
+    }
+    all[realIdx].estado = 'pagado';
+    all[realIdx].montoPagado = montoFinal;
+    all[realIdx].fechaPago = hoy;
+    setPrestamos(all);
+    mostrarToast('✓ Pago registrado por $' + montoFinal.toLocaleString('es-CL'));
+    renderPrestamosActivos();
+    renderPrestamosHistorial();
+  }
+}
+function renderPrestamosHistorial() {
+  const pagados = getPrestamos().filter(p => p.estado === 'pagado');
+  if (pagados.length === 0) {
+    document.getElementById('prestamos-historial-lista').innerHTML = '<div style="text-align:center; padding:2rem; color:var(--texto-suave); font-size:0.85rem;">Sin historial aún</div>';
+    return;
+  }
+  let html = '';
+  pagados.forEach(p => {
+    const fecha = new Date(p.fechaPago).toLocaleDateString('es-CL');
+    html += `<div class="prestamo-item">
+      <div class="prestamo-row">
+        <div>
+          <div class="prestamo-persona">${SOBRINAS[p.persona].nombre} — ${p.motivo}</div>
+          <div class="prestamo-detalle">Capital: $${p.monto.toLocaleString('es-CL')} · Pagado: ${fecha}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="prestamo-monto" style="color:var(--verde);">$${(p.montoPagado||p.monto).toLocaleString('es-CL')}</div>
+          <span class="prestamo-estado estado-pagado">✓ Pagado</span>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('prestamos-historial-lista').innerHTML = html;
+}
+
+// ======== TABS ========
+function switchTab(id) {
+  const parent = document.getElementById(id).closest('.leccion-body') || document.getElementById('panel-tia');
+  parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('activo'));
+  parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
+  document.getElementById(id).classList.add('activo');
+  const allTabs = parent.querySelectorAll('.tab-btn');
+  const mapping = { 'tab-nuevo': 0, 'tab-activos': 1, 'tab-historial': 2, 'tab-progreso-tia': 3, 'tab-leccion': 0, 'tab-desafio': 1, 'tab-quiz': 2 };
+  if (id === 'tab-progreso-tia') renderProgresoTia();
+  if (mapping[id] !== undefined && allTabs[mapping[id]]) allTabs[mapping[id]].classList.add('activo');
+}
+
+
+// ======== GRETTY & TIA PROGRESO ========
+function entrarGretty() {
+  usuarioActual = 'gretty';
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('panel-gretty').style.display = 'block';
+  renderGretty();
+}
+
+function renderGretty() {
+  let html = '';
+  [0,1].forEach(idx => {
+    const e = getEstado(idx);
+    const s = SOBRINAS[idx];
+    const prestamos = getPrestamos().filter(p => p.persona == idx);
+    const deudaActiva = prestamos.filter(p => p.estado !== 'pagado');
+    let html_semanas = '';
+    SEMANAS.forEach((sem, i) => {
+      const comp = e.semanasCompletadas.includes(i);
+      const activa = i === e.semanaActual;
+      html_semanas += `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--borde);font-size:0.8rem;">
+        <span>${sem.icono} S${i+1}: ${sem.titulo}</span>
+        <span style="color:${comp?'var(--verde)':activa?'var(--mo)':'var(--txt2)'};">${comp?'✓':activa?'●':'🔒'}</span>
+      </div>`;
+    });
+    let desafios_html = '';
+    Object.entries(e.desafiosGuardados).forEach(([k,v]) => {
+      desafios_html += `<div style="background:var(--am2);border-radius:8px;padding:0.6rem;margin-bottom:6px;font-size:0.8rem;">
+        <strong style="color:var(--am3);">Semana ${parseInt(k)+1}:</strong> ${v}
+      </div>`;
+    });
+    html += `<div style="background:white;border:1px solid var(--borde);border-radius:14px;padding:1.1rem;margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+        <div style="width:42px;height:42px;border-radius:50%;background:${s.color};color:${s.textColor};display:flex;align-items:center;justify-content:center;font-family:var(--font-titulo);font-weight:700;">${s.avatar}</div>
+        <div>
+          <div style="font-family:var(--font-titulo);font-weight:700;">${s.nombre}</div>
+          <div style="font-size:0.75rem;color:var(--txt2);">⭐ ${e.puntos} pts · Semana ${e.semanaActual+1}/10</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:0.85rem;">
+        <div style="background:var(--mo3);border-radius:8px;padding:0.6rem;text-align:center;">
+          <div style="font-size:0.65rem;color:var(--txt2);text-transform:uppercase;">Completadas</div>
+          <div style="font-family:var(--font-titulo);font-size:1.2rem;font-weight:700;color:var(--mo);">${e.semanasCompletadas.length}/10</div>
+        </div>
+        <div style="background:${deudaActiva.length>0?'#fee2e2':'#d1fae5'};border-radius:8px;padding:0.6rem;text-align:center;">
+          <div style="font-size:0.65rem;color:var(--txt2);text-transform:uppercase;">Préstamos activos</div>
+          <div style="font-family:var(--font-titulo);font-size:1.2rem;font-weight:700;color:${deudaActiva.length>0?'var(--rojo)':'var(--verde)'};">${deudaActiva.length}</div>
+        </div>
+      </div>
+      <details style="margin-bottom:0.5rem;">
+        <summary style="font-size:0.82rem;font-weight:600;cursor:pointer;color:var(--mo);padding:4px 0;">📚 Ver progreso por semana</summary>
+        <div style="margin-top:6px;">${html_semanas}</div>
+      </details>
+      ${desafios_html.length > 0 ? `<details><summary style="font-size:0.82rem;font-weight:600;cursor:pointer;color:var(--am3);padding:4px 0;">📝 Ver respuestas de desafíos</summary><div style="margin-top:6px;">${desafios_html}</div></details>` : '<div style="font-size:0.8rem;color:var(--txt2);">Aún no ha guardado desafíos.</div>'}
+    </div>`;
+  });
+  document.getElementById('gretty-contenido').innerHTML = html;
+}
+
+function renderProgresoTia() {
+  let html = '';
+  [0,1].forEach(idx => {
+    const e = getEstado(idx);
+    const s = SOBRINAS[idx];
+    let desafios_html = '';
+    Object.entries(e.desafiosGuardados).forEach(([k,v]) => {
+      desafios_html += `<div style="background:var(--am2);border-radius:8px;padding:0.6rem;margin-bottom:6px;font-size:0.8rem;">
+        <strong style="color:var(--am3);">Semana ${parseInt(k)+1}:</strong><br>${v}
+      </div>`;
+    });
+    let sem_html = SEMANAS.map((sem,i) => {
+      const comp = e.semanasCompletadas.includes(i);
+      const act = i === e.semanaActual;
+      return `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.78rem;border-bottom:1px solid var(--borde);">
+        <span>${sem.icono} ${sem.titulo}</span>
+        <span style="color:${comp?'var(--verde)':act?'var(--mo)':'var(--txt2)'};">${comp?'✓ Completa':act?'En curso':'Pendiente'}</span>
+      </div>`;
+    }).join('');
+    html += `<div style="background:white;border:1px solid var(--borde);border-radius:14px;padding:1.1rem;margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.85rem;">
+        <div style="width:38px;height:38px;border-radius:50%;background:${s.color};color:${s.textColor};display:flex;align-items:center;justify-content:center;font-family:var(--font-titulo);font-weight:700;font-size:0.85rem;">${s.avatar}</div>
+        <div style="font-family:var(--font-titulo);font-weight:700;">${s.nombre} · ⭐ ${e.puntos} pts</div>
+      </div>
+      <details style="margin-bottom:0.5rem;">
+        <summary style="font-size:0.82rem;font-weight:600;cursor:pointer;color:var(--mo);padding:4px 0;">📚 Progreso por semana</summary>
+        <div style="margin-top:6px;">${sem_html}</div>
+      </details>
+      <details>
+        <summary style="font-size:0.82rem;font-weight:600;cursor:pointer;color:var(--am3);padding:4px 0;">📝 Respuestas de desafíos</summary>
+        <div style="margin-top:6px;">${desafios_html.length > 0 ? desafios_html : '<div style="font-size:0.8rem;color:var(--txt2);">Sin desafíos guardados aún.</div>'}</div>
+      </details>
+    </div>`;
+  });
+  document.getElementById('progreso-tia-contenido').innerHTML = html;
+}
+
+// ======== CALCULADORAS INTERACTIVAS ========
+function calcInflacion() {
+  const monto = parseInt(document.getElementById('c1-monto')?.value) || 10000;
+  const años = parseInt(document.getElementById('c1-años')?.value) || 5;
+  const inf = parseFloat(document.getElementById('c1-inf')?.value) || 5;
+  const resultado = Math.round(monto / Math.pow(1 + inf/100, años));
+  const perdida = monto - resultado;
+  document.getElementById('c1-monto-out').textContent = '$' + monto.toLocaleString('es-CL');
+  document.getElementById('c1-años-out').textContent = años;
+  document.getElementById('c1-inf-out').textContent = inf + '%';
+  document.getElementById('c1-r-años').textContent = años;
+  document.getElementById('c1-resultado').textContent = '$' + resultado.toLocaleString('es-CL');
+  document.getElementById('c1-perdida').textContent = '$' + perdida.toLocaleString('es-CL');
+}
+
+function calcPresupuesto() {
+  const ingreso = parseInt(document.getElementById('c2-ingreso')?.value) || 20000;
+  const necPct = parseInt(document.getElementById('c2-nec')?.value) || 50;
+  const desPct = parseInt(document.getElementById('c2-des')?.value) || 30;
+  const ahoPct = 100 - necPct - desPct;
+  const nec = Math.round(ingreso * necPct / 100);
+  const des = Math.round(ingreso * desPct / 100);
+  const aho = Math.round(ingreso * ahoPct / 100);
+  document.getElementById('c2-nec-pct').textContent = necPct + '%';
+  document.getElementById('c2-des-pct').textContent = desPct + '%';
+  document.getElementById('c2-nec-val').textContent = '$' + nec.toLocaleString('es-CL');
+  document.getElementById('c2-des-val').textContent = '$' + des.toLocaleString('es-CL');
+  document.getElementById('c2-aho-val').textContent = aho >= 0 ? '$' + aho.toLocaleString('es-CL') : '⚠️ $0 (¡gastas más de lo que tienes!)';
+  document.getElementById('c2-aho-val').style.color = aho > 0 ? 'var(--verde)' : 'var(--rojo)';
+  if (document.getElementById('c2-alerta'))
+    document.getElementById('c2-alerta').textContent = aho < 0 ? '⚠️ Suma más del 100%: reduce necesidades o deseos.' : ahoPct >= 20 ? '✅ ¡Genial! Ahorras el ' + ahoPct + '%.' : '💡 Intenta llegar al 20% de ahorro.';
+}
+
+function calcAhorro() {
+  const mes = parseInt(document.getElementById('c3-mes')?.value) || 5000;
+  const años = parseInt(document.getElementById('c3-años')?.value) || 5;
+  const tasa = parseFloat(document.getElementById('c3-tasa')?.value) || 3;
+  const meses = años * 12;
+  const r = tasa / 100 / 12;
+  let total = r > 0 ? mes * (Math.pow(1+r, meses) - 1) / r : mes * meses;
+  const deposito = mes * meses;
+  const ganado = total - deposito;
+  document.getElementById('c3-mes-out').textContent = '$' + mes.toLocaleString('es-CL');
+  document.getElementById('c3-años-out').textContent = años;
+  document.getElementById('c3-tasa-out').textContent = tasa + '%';
+  document.getElementById('c3-deposito').textContent = '$' + Math.round(deposito).toLocaleString('es-CL');
+  document.getElementById('c3-total').textContent = '$' + Math.round(total).toLocaleString('es-CL');
+  document.getElementById('c3-ganado').textContent = '$' + Math.round(ganado).toLocaleString('es-CL');
+}
+
+function calcTDC() {
+  const deuda = parseInt(document.getElementById('c6-deuda')?.value) || 100000;
+  const cuotas = parseInt(document.getElementById('c6-cuotas')?.value) || 12;
+  const tasa = 0.035; // tasa fija 3.5% mensual típica Chile
+  const cuota = deuda * (tasa * Math.pow(1+tasa, cuotas)) / (Math.pow(1+tasa, cuotas) - 1);
+  const total = cuota * cuotas;
+  const interes = total - deuda;
+  const pct = Math.round(interes / deuda * 100);
+  document.getElementById('c6-deuda-out').textContent = '$' + deuda.toLocaleString('es-CL');
+  document.getElementById('c6-cuotas-out').textContent = cuotas;
+  document.getElementById('c6-cuota').textContent = '$' + Math.round(cuota).toLocaleString('es-CL');
+  document.getElementById('c6-total').textContent = '$' + Math.round(total).toLocaleString('es-CL');
+  document.getElementById('c6-interes').textContent = '$' + Math.round(interes).toLocaleString('es-CL');
+  document.getElementById('c6-msg').textContent = '⚠️ Pagaste un ' + pct + '% extra solo por usar la tarjeta en cuotas.';
+}
+
+function calcPrestamo() {
+  const cap = parseInt(document.getElementById('c7-cap')?.value) || 50000;
+  const tasa = parseFloat(document.getElementById('c7-tasa')?.value) || 5;
+  const meses = parseInt(document.getElementById('c7-meses')?.value) || 3;
+  const interes = Math.round(cap * (tasa/100) * meses);
+  const total = cap + interes;
+  document.getElementById('c7-cap-out').textContent = '$' + cap.toLocaleString('es-CL');
+  document.getElementById('c7-tasa-out').textContent = tasa + '%';
+  document.getElementById('c7-meses-out').textContent = meses;
+  document.getElementById('c7-r-cap').textContent = '$' + cap.toLocaleString('es-CL');
+  document.getElementById('c7-r-int').textContent = '$' + interes.toLocaleString('es-CL');
+  document.getElementById('c7-r-tot').textContent = '$' + total.toLocaleString('es-CL');
+}
+
+function calcInversion() {
+  const mes = parseInt(document.getElementById('c8-mes')?.value) || 10000;
+  const años = parseInt(document.getElementById('c8-años')?.value) || 10;
+  const meses = años * 12;
+  const colchon = mes * meses;
+  const r3 = 0.03/12;
+  const banco = mes * (Math.pow(1+r3, meses) - 1) / r3;
+  const r7 = 0.07/12;
+  const fondo = mes * (Math.pow(1+r7, meses) - 1) / r7;
+  const dif = Math.round(fondo - colchon);
+  document.getElementById('c8-mes-out').textContent = '$' + mes.toLocaleString('es-CL');
+  document.getElementById('c8-años-out').textContent = años;
+  document.getElementById('c8-colchon').textContent = '$' + Math.round(colchon).toLocaleString('es-CL');
+  document.getElementById('c8-banco').textContent = '$' + Math.round(banco).toLocaleString('es-CL');
+  document.getElementById('c8-fondo').textContent = '$' + Math.round(fondo).toLocaleString('es-CL');
+  document.getElementById('c8-dif').innerHTML = 'Invertir te da <strong>$' + dif.toLocaleString('es-CL') + ' más</strong> que guardar bajo el colchón 🚀';
+}
+
+
+// ======== TOAST ========
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2500);
+}
+</script>
+</body>
+</html>
