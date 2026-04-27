@@ -324,6 +324,9 @@
     <div class="bienvenida">
       <h2 id="bienvenida-nombre">¡Hola, Giovanna Sinaí! 👋</h2>
       <p>Continúa aprendiendo finanzas · Semana <span id="bienvenida-semana">1</span> de 10</p>
+      <div id="bienvenida-premio" style="display:none; margin-top:0.6rem; background:rgba(245,158,11,0.25); border-radius:10px; padding:0.5rem 0.85rem; font-size:0.82rem; color:#fde68a;">
+        💰 Has ganado <strong id="bienvenida-premio-monto">$0</strong> — ¡pídele tu premio a la Tía Liss!
+      </div>
     </div>
     <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
       <div class="stat-card">
@@ -1245,6 +1248,16 @@ function renderInicio() {
   document.getElementById('stat-puntos').textContent = e.puntos;
   document.getElementById('stat-semana').textContent = (e.semanaActual+1)+'/10';
   document.getElementById('stat-dinero').textContent = '$' + ((e.dineroGanado||0)).toLocaleString('es-CL');
+  const dineroGanado = e.dineroGanado || 0;
+  const premioBanner = document.getElementById('bienvenida-premio');
+  if (premioBanner) {
+    if (dineroGanado > 0) {
+      premioBanner.style.display = 'block';
+      document.getElementById('bienvenida-premio-monto').textContent = '$' + dineroGanado.toLocaleString('es-CL');
+    } else {
+      premioBanner.style.display = 'none';
+    }
+  }
   // deuda
   const prestamos = getPrestamos().filter(p => p.persona == usuarioActual && p.estado !== 'pagado');
   let deudaTotal = 0;
@@ -1266,9 +1279,10 @@ function renderInicio() {
     const completada = e.semanasCompletadas.includes(i);
     const activa = i === e.semanaActual;
     const bloqueada = i > e.semanaActual;
+    const premioSem = PREMIOS_SEMANA[i];
     let badge = bloqueada ? '<span class="semana-badge badge-bloqueada">🔒 Bloqueada</span>' :
-                completada ? '<span class="semana-badge badge-completada">✓ Completada</span>' :
-                '<span class="semana-badge badge-activa">● Activa</span>';
+                completada ? '<span class="semana-badge badge-completada">✓ Completada · $' + premioSem.toLocaleString('es-CL') + '</span>' :
+                '<span class="semana-badge badge-activa">● En curso</span>';
     let progress = completada ? 100 : activa ? 30 : 0;
     html += `<div class="semana-card ${bloqueada?'bloqueada':''}" onclick="${bloqueada?'mostrarToast(\'Completa la semana anterior primero\')':'abrirLeccion('+i+')'}">
       <div class="semana-header">
@@ -1411,6 +1425,7 @@ function enviarQuiz(semIdx) {
     if (semIdx === 9) { darLogro('semana10'); e.certificado = true; e.dineroGanado = (e.dineroGanado || 0) + PREMIO_CERTIFICADO; }
   }
   setEstado(usuarioActual, e);
+  if (aprobado) { try { renderInicio(); } catch(ex) {} }
   const premioSemana = PREMIOS_SEMANA[semIdx];
   const eResult = getEstado(usuarioActual);
   document.getElementById(`quiz-resultado-${semIdx}`).innerHTML = `
