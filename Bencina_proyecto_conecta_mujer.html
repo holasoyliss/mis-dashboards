@@ -175,76 +175,58 @@
     <p class="subtitulo">Anexo N°8 · Combustible y peajes</p>
     <p class="proyecto">IL-00089-25 — Red Conecta Mujer: Participación, Diversidad y Tech para el Desarrollo</p>
 
-    <form id="form">
+    <form id="form" target="hidden_iframe" method="POST" action="https://script.google.com/macros/s/AKfycbxvorjrfoaFHZo46qOL0F2tQneRXIvjHiJzK0c_elvKzCfvHFEKYx_OzZ_jIc9v2EN_BA/exec">
       <label for="descripcion">Descripción recorrido</label>
-      <textarea id="descripcion" rows="2" required placeholder="DESDE: PROVIDENCIA&#10;HASTA: ALHUÉ"></textarea>
+      <textarea id="descripcion" name="descripcion" rows="2" required placeholder="DESDE: PROVIDENCIA&#10;HASTA: ALHUÉ"></textarea>
 
       <label for="fecha">Fecha cometido</label>
-      <input type="date" id="fecha" required>
+      <input type="date" id="fecha" name="fecha" required>
 
       <label for="motivo">Motivo</label>
-      <textarea id="motivo" rows="2" required placeholder="Ej: Reunión mesa técnica de turismo"></textarea>
+      <textarea id="motivo" name="motivo" rows="2" required placeholder="Ej: Reunión mesa técnica de turismo"></textarea>
 
       <label for="kms">Kms</label>
-      <input type="number" id="kms" step="0.1" min="0" required placeholder="Ej: 300">
+      <input type="number" id="kms" name="kms" step="0.1" min="0" required placeholder="Ej: 300">
 
       <label for="valorCombustible">Valor combustible</label>
-      <input type="number" id="valorCombustible" step="1" min="0" required placeholder="Ej: 30729">
+      <input type="number" id="valorCombustible" name="valorCombustible" step="1" min="0" required placeholder="Ej: 30729">
 
       <button type="submit" id="btnGuardar">Guardar viaje</button>
     </form>
 
     <div id="mensaje"></div>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
   </div>
 </div>
 
 <footer>CDI Chile · Fondo Comunidad Activa 2025</footer>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvorjrfoaFHZo46qOL0F2tQneRXIvjHiJzK0c_elvKzCfvHFEKYx_OzZ_jIc9v2EN_BA/exec";
+  let enviando = false;
 
   document.getElementById('fecha').valueAsDate = new Date();
 
-  document.getElementById('form').addEventListener('submit', function (e) {
-    e.preventDefault();
+  document.getElementById('form').addEventListener('submit', function () {
+    enviando = true;
     const btn = document.getElementById('btnGuardar');
     const msg = document.getElementById('mensaje');
-
     btn.disabled = true;
     msg.className = 'cargando';
     msg.textContent = 'Guardando...';
+    // No usamos preventDefault: dejamos que el navegador envíe el formulario
+    // de forma clásica hacia el iframe oculto, evitando el bloqueo de CORS.
+  });
 
-    const datos = {
-      descripcion: document.getElementById('descripcion').value,
-      fecha: document.getElementById('fecha').value,
-      motivo: document.getElementById('motivo').value,
-      kms: document.getElementById('kms').value,
-      valorCombustible: document.getElementById('valorCombustible').value
-    };
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(datos)
-    })
-      .then(res => res.json())
-      .then(res => {
-        btn.disabled = false;
-        if (res.status === 'ok') {
-          msg.className = 'ok';
-          msg.textContent = '✓ Viaje guardado correctamente';
-          document.getElementById('form').reset();
-          document.getElementById('fecha').valueAsDate = new Date();
-        } else {
-          msg.className = 'error';
-          msg.textContent = 'Error: ' + res.message;
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        msg.className = 'error';
-        msg.textContent = 'Error de conexión: revisa la URL del script';
-      });
+  document.getElementById('hidden_iframe').addEventListener('load', function () {
+    if (!enviando) return; // ignora la carga inicial en blanco del iframe
+    enviando = false;
+    const btn = document.getElementById('btnGuardar');
+    const msg = document.getElementById('mensaje');
+    btn.disabled = false;
+    msg.className = 'ok';
+    msg.textContent = '✓ Viaje guardado correctamente';
+    document.getElementById('form').reset();
+    document.getElementById('fecha').valueAsDate = new Date();
   });
 </script>
 
