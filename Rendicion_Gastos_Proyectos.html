@@ -71,7 +71,7 @@ input:focus, select:focus, textarea:focus {
 }
 textarea { resize: vertical; min-height: 60px; }
 
-#rutGroup, #itemOtroGroup { display: none; }
+#rutGroup, #itemOtroGroup, #proyectoOtroGroup { display: none; }
 
 .foto-zona {
   border: 2px dashed #cfcfcf;
@@ -142,6 +142,25 @@ button[type=submit]:disabled { background: #d9a876; cursor: default; }
   <div class="subtitulo">Proyectos · se guarda directo en tu planilla</div>
 
   <form id="rendicionForm" method="POST" enctype="multipart/form-data" target="hidden_iframe">
+
+    <div class="campo">
+      <label for="proyecto">Proyecto</label>
+      <select id="proyecto" name="proyecto" required>
+        <option value="" disabled selected>Selecciona...</option>
+        <option value="GORE: Red Conecta Mujer">GORE: Red Conecta Mujer</option>
+        <option value="AFP Capital">AFP Capital</option>
+        <option value="Empresas SB">Empresas SB</option>
+        <option value="Banco de Chile">Banco de Chile</option>
+        <option value="DigiSpark">DigiSpark</option>
+        <option value="Euromonitor">Euromonitor</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="campo" id="proyectoOtroGroup">
+      <label for="proyectoOtro">Especifica el proyecto</label>
+      <input type="text" id="proyectoOtro" name="proyectoOtro">
+    </div>
 
     <div class="campo">
       <label for="fecha">Fecha del comprobante</label>
@@ -224,7 +243,7 @@ button[type=submit]:disabled { background: #d9a876; cursor: default; }
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none"></iframe>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB2TLnj8SPfy96bnRxCGDCxRwjZrAUF8BQDkc0EMaGRFlqNBuVnNQBczk2UD6PFTz3Kg/exec";
+const SCRIPT_URL = "PEGA_AQUI_TU_URL_DEL_SCRIPT";
 
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('rendicionForm').action = SCRIPT_URL;
@@ -240,6 +259,13 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     })
     .catch(function () { /* si falla, no pasa nada, sigues escribiendo a mano */ });
+});
+
+document.getElementById('proyecto').addEventListener('change', function () {
+  var esOtro = (this.value === 'Otro');
+  document.getElementById('proyectoOtroGroup').style.display = esOtro ? 'block' : 'none';
+  document.getElementById('proyectoOtro').required = esOtro;
+  if (!esOtro) document.getElementById('proyectoOtro').value = '';
 });
 
 document.getElementById('tipoDocumento').addEventListener('change', function () {
@@ -300,6 +326,7 @@ document.getElementById('hidden_iframe').addEventListener('load', function () {
   document.getElementById('fotoPreview').style.display = 'none';
   document.getElementById('rutGroup').style.display = 'none';
   document.getElementById('itemOtroGroup').style.display = 'none';
+  document.getElementById('proyectoOtroGroup').style.display = 'none';
   setTimeout(function () { document.getElementById('successMsg').style.display = 'none'; }, 4000);
 });
 </script>
