@@ -1,1 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rendición de Gastos · CDI Chile</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23F58220'/%3E%3Crect x='0' y='35' width='20' height='30' fill='white'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23F58220'/%3E%3Crect x='0' y='35' width='20' height='30' fill='white'/%3E%3C/svg%3E">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700;900&display=swap');
 
+:root {
+  --rojo:#EE3124; --naranja:#F58220; --amarillo:#FDB940;
+  --verde:#4AB969; --azul:#16BECF; --purpura:#5A3795;
+  --negro:#1a1a1a; --gris:#777777; --gris-claro:#f2f2f2;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', Arial, sans-serif;
+  background: #fafafa;
+  margin: 0;
+  color: var(--negro);
+}
+
+.stripe { display: flex; height: 6px; }
+.stripe div { flex: 1; }
+
+.contenedor {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 22px;
+  margin-top: 18px;
+}
+.logo span:first-child { color: var(--azul); }
+.logo span:last-child { color: var(--azul); }
+
+h1 {
+  font-weight: 900;
+  font-size: 24px;
+  color: var(--naranja);
+  margin: 10px 0 2px;
+}
+.subtitulo { color: var(--gris); font-size: 13px; margin-bottom: 24px; }
+
+.campo { margin-bottom: 18px; }
+label {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-family: 'Nunito', Arial, sans-serif;
+  font-size: 15px;
+  background: #fff;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--azul);
+}
+textarea { resize: vertical; min-height: 60px; }
+
+#rutGroup, #itemOtroGroup { display: none; }
+
+.foto-zona {
+  border: 2px dashed #cfcfcf;
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  background: var(--gris-claro);
+}
+.foto-zona label {
+  display: inline-block;
+  background: var(--azul);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+.foto-zona input[type=file] { display: none; }
+#fotoPreview {
+  display: none;
+  max-width: 100%;
+  margin-top: 14px;
+  border-radius: 10px;
+}
+.ayuda-foto { font-size: 12px; color: var(--gris); margin-top: 8px; }
+
+button[type=submit] {
+  width: 100%;
+  background: var(--naranja);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+button[type=submit]:disabled { background: #d9a876; cursor: default; }
+
+#successMsg {
+  display: none;
+  background: var(--verde);
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 700;
+  margin-top: 16px;
+}
+</style>
+</head>
+<body>
+
+<div class="stripe">
+  <div style="background:var(--rojo)"></div>
+  <div style="background:var(--naranja)"></div>
+  <div style="background:var(--amarillo)"></div>
+  <div style="background:var(--verde)"></div>
+  <div style="background:var(--azul)"></div>
+  <div style="background:var(--purpura)"></div>
+</div>
+
+<div class="contenedor">
+  <div class="logo"><span>CDI</span> <span>Chile</span></div>
+  <h1>Rendición de Gastos</h1>
+  <div class="subtitulo">Proyectos · se guarda directo en tu planilla</div>
+
+  <form id="rendicionForm" method="POST" enctype="multipart/form-data" target="hidden_iframe">
+
+    <div class="campo">
+      <label for="fecha">Fecha del comprobante</label>
+      <input type="date" id="fecha" name="fecha" required>
+    </div>
+
+    <div class="campo">
+      <label for="tipoDocumento">Tipo de documento</label>
+      <select id="tipoDocumento" name="tipoDocumento" required>
+        <option value="" disabled selected>Selecciona...</option>
+        <option value="Boleta de compra y venta">Boleta de compra y venta</option>
+        <option value="Factura">Factura</option>
+        <option value="Boleta de Honorarios o prestación de Servicio">Boleta de Honorarios o prestación de Servicio</option>
+        <option value="Ticket de pasaje">Ticket de pasaje</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="campo" id="rutGroup">
+      <label for="rut">RUT de la Razón Social</label>
+      <input type="text" id="rut" name="rut" placeholder="12.345.678-9">
+    </div>
+
+    <div class="campo">
+      <label for="nDocumento">N° de documento</label>
+      <input type="text" id="nDocumento" name="nDocumento" placeholder="Número impreso en el comprobante">
+    </div>
+
+    <div class="campo">
+      <label for="razonSocial">Razón Social</label>
+      <input type="text" id="razonSocial" name="razonSocial" list="razonSocialList" required autocomplete="off">
+      <datalist id="razonSocialList"></datalist>
+    </div>
+
+    <div class="campo">
+      <label for="detalle">Detalle del gasto</label>
+      <textarea id="detalle" name="detalle" required placeholder="Ej: traslado a aeropuerto"></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="item">Ítem del gasto</label>
+      <select id="item" name="item" required>
+        <option value="" disabled selected>Selecciona...</option>
+        <option value="Traslado">Traslado</option>
+        <option value="Alimentación">Alimentación</option>
+        <option value="Materiales">Materiales</option>
+        <option value="Arriendo de espacio">Arriendo de espacio</option>
+        <option value="Honorarios">Honorarios</option>
+        <option value="Comunicaciones">Comunicaciones</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="campo" id="itemOtroGroup">
+      <label for="itemOtro">Especifica el ítem</label>
+      <input type="text" id="itemOtro" name="itemOtro">
+    </div>
+
+    <div class="campo">
+      <label for="total">Monto total ($)</label>
+      <input type="number" id="total" name="total" min="0" inputmode="numeric" required>
+    </div>
+
+    <div class="campo">
+      <label>Foto del comprobante (opcional, recomendado)</label>
+      <div class="foto-zona">
+        <label for="fotoInput">📷 Tomar o elegir foto</label>
+        <input type="file" id="fotoInput" accept="image/*" capture="environment">
+        <img id="fotoPreview" alt="Vista previa">
+        <div class="ayuda-foto">Se comprime automáticamente antes de subir, no te preocupes por el tamaño.</div>
+      </div>
+      <input type="hidden" id="fotoBase64" name="fotoBase64">
+    </div>
+
+    <button type="submit" id="submitBtn">Guardar gasto</button>
+    <div id="successMsg">✓ Gasto guardado correctamente</div>
+  </form>
+</div>
+
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none"></iframe>
+
+<script>
+const SCRIPT_URL = "PEGA_AQUI_TU_URL_DEL_SCRIPT";
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('rendicionForm').action = SCRIPT_URL;
+
+  fetch(SCRIPT_URL + '?action=razonSocial')
+    .then(function (res) { return res.json(); })
+    .then(function (lista) {
+      var datalist = document.getElementById('razonSocialList');
+      lista.forEach(function (nombre) {
+        var opt = document.createElement('option');
+        opt.value = nombre;
+        datalist.appendChild(opt);
+      });
+    })
+    .catch(function () { /* si falla, no pasa nada, sigues escribiendo a mano */ });
+});
+
+document.getElementById('tipoDocumento').addEventListener('change', function () {
+  var necesitaRut = (this.value === 'Factura' || this.value === 'Boleta de Honorarios o prestación de Servicio');
+  document.getElementById('rutGroup').style.display = necesitaRut ? 'block' : 'none';
+  document.getElementById('rut').required = necesitaRut;
+  if (!necesitaRut) document.getElementById('rut').value = '';
+});
+
+document.getElementById('item').addEventListener('change', function () {
+  var esOtro = (this.value === 'Otro');
+  document.getElementById('itemOtroGroup').style.display = esOtro ? 'block' : 'none';
+  document.getElementById('itemOtro').required = esOtro;
+  if (!esOtro) document.getElementById('itemOtro').value = '';
+});
+
+document.getElementById('fotoInput').addEventListener('change', function (e) {
+  var file = e.target.files[0];
+  var preview = document.getElementById('fotoPreview');
+  if (!file) { document.getElementById('fotoBase64').value = ''; preview.style.display = 'none'; return; }
+
+  var reader = new FileReader();
+  reader.onload = function (ev) {
+    var img = new Image();
+    img.onload = function () {
+      var maxAncho = 1280;
+      var escala = Math.min(1, maxAncho / img.width);
+      var canvas = document.createElement('canvas');
+      canvas.width = img.width * escala;
+      canvas.height = img.height * escala;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      document.getElementById('fotoBase64').value = dataUrl;
+      preview.src = dataUrl;
+      preview.style.display = 'block';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+var formEnviado = false;
+document.getElementById('rendicionForm').addEventListener('submit', function () {
+  formEnviado = true;
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+});
+
+document.getElementById('hidden_iframe').addEventListener('load', function () {
+  if (!formEnviado) return;
+  formEnviado = false;
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = false;
+  btn.textContent = 'Guardar gasto';
+  document.getElementById('successMsg').style.display = 'block';
+  document.getElementById('rendicionForm').reset();
+  document.getElementById('fotoPreview').style.display = 'none';
+  document.getElementById('rutGroup').style.display = 'none';
+  document.getElementById('itemOtroGroup').style.display = 'none';
+  setTimeout(function () { document.getElementById('successMsg').style.display = 'none'; }, 4000);
+});
+</script>
+</body>
+</html>
