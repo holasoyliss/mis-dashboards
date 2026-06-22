@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rendición de Gastos · CDI Chile</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23F58220'/%3E%3Crect x='0' y='35' width='20' height='30' fill='white'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23F58220'/%3E%3Crect x='0' y='35' width='20' height='30' fill='white'/%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700;900&display=swap');
 
@@ -33,13 +32,8 @@ body {
   padding: 24px 20px 60px;
 }
 
-.logo {
-  font-weight: 900;
-  font-size: 22px;
-  margin-top: 18px;
-}
-.logo span:first-child { color: var(--azul); }
-.logo span:last-child { color: var(--azul); }
+.logo { font-weight: 900; font-size: 22px; margin-top: 18px; }
+.logo span { color: var(--azul); }
 
 h1 {
   font-weight: 900;
@@ -144,6 +138,23 @@ button[type=submit]:disabled { background: #d9a876; cursor: default; }
   <form id="rendicionForm" method="POST" enctype="multipart/form-data" target="hidden_iframe">
 
     <div class="campo">
+      <label for="responsable">Responsable de rendición</label>
+      <select id="responsable" name="responsable" required>
+        <option value="" disabled selected>Selecciona...</option>
+        <option value="Anyeli Mantilla">Anyeli Mantilla</option>
+        <option value="Carolina Escobar">Carolina Escobar</option>
+        <option value="Daisy Campaña">Daisy Campaña</option>
+        <option value="Eugenio Vergara">Eugenio Vergara</option>
+        <option value="Feibert Quintero">Feibert Quintero</option>
+        <option value="Francisca Núñez">Francisca Núñez</option>
+        <option value="Jocelyn Olivares">Jocelyn Olivares</option>
+        <option value="Marcia Cortéz">Marcia Cortéz</option>
+        <option value="Nataly Cueto">Nataly Cueto</option>
+        <option value="Liss Falcón">Liss Falcón</option>
+      </select>
+    </div>
+
+    <div class="campo">
       <label for="proyecto">Proyecto</label>
       <select id="proyecto" name="proyecto" required>
         <option value="" disabled selected>Selecciona...</option>
@@ -243,7 +254,7 @@ button[type=submit]:disabled { background: #d9a876; cursor: default; }
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none"></iframe>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB2TLnj8SPfy96bnRxCGDCxRwjZrAUF8BQDkc0EMaGRFlqNBuVnNQBczk2UD6PFTz3Kg/exec";
+const SCRIPT_URL = "PEGA_AQUI_TU_URL_DEL_SCRIPT";
 
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('rendicionForm').action = SCRIPT_URL;
@@ -258,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
         datalist.appendChild(opt);
       });
     })
-    .catch(function () { /* si falla, no pasa nada, sigues escribiendo a mano */ });
+    .catch(function () {});
 });
 
 document.getElementById('proyecto').addEventListener('change', function () {
@@ -286,7 +297,6 @@ document.getElementById('fotoInput').addEventListener('change', function (e) {
   var file = e.target.files[0];
   var preview = document.getElementById('fotoPreview');
   if (!file) { document.getElementById('fotoBase64').value = ''; preview.style.display = 'none'; return; }
-
   var reader = new FileReader();
   reader.onload = function (ev) {
     var img = new Image();
